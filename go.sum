@@ -1,7 +1,5 @@
 github.com/Curtis-Milo/nat-type-identifier-go v0.0.0-20220215191915-18d42168c63d h1:62lEBImTxZ83pgzywgDNIrPPuQ+j4ep9QjqrWBn1hrU=
 github.com/Curtis-Milo/nat-type-identifier-go v0.0.0-20220215191915-18d42168c63d/go.mod h1:lW9x+yEjqKdPbE3+cf2fGPJXCw/hChX3Omi9QHTLFsQ=
-github.com/KaySar12/NextZen-Common v0.4.8-alpha3 h1:5E5LAqi2uXpOZqcPOgQ4m6d9MagYyfhKIFXnzd8s3W4=
-github.com/KaySar12/NextZen-Common v0.4.8-alpha3/go.mod h1:2IuYyy5qW1BE6jqC6M+tOU+WtUec1K565rLATBJ9p/0=
 github.com/KaySar12/NextZen-Common v1.0.1 h1:w+QTKRmXJBmru3Ig4x142k6c7oD6ZTMF13Q0Fu19bGo=
 github.com/KaySar12/NextZen-Common v1.0.1/go.mod h1:7AnhDlcVN9Dusql3aFy7y7TcyoKO3Pb9n/r0krTAWsw=
 github.com/RaveNoX/go-jsoncommentstrip v1.0.0/go.mod h1:78ihd09MekBnJnxpICcwzCMzGrKSKYe4AqU6PDYYpjk=
@@ -445,6 +443,7 @@ gorm.io/gorm v1.25.0 h1:+KtYtb2roDz14EQe4bla8CbQlmb9dN3VejSai3lprfU=
 gorm.io/gorm v1.25.0/go.mod h1:L4uxeKpfBml98NYqVqwAdmV1a2nBtAec/cf3fpucW/k=
 gotest.tools v2.2.0+incompatible h1:VsBPFP1AI068pPrMxtb/S8Zkgf9xEmTLJjfM+P5UIEo=
 gotest.tools v2.2.0+incompatible/go.mod h1:DsYFclhRJ6vuDpmuTbkuFWG+y2sxOXAzmJt81HFBacw=
+gotest.tools/v3 v3.4.0 h1:ZazjZUfuVeZGLAmlKKuyv3IKP5orXcwtOwDQH6YVr6o=
 modernc.org/libc v1.22.4 h1:wymSbZb0AlrjdAVX3cjreCHTPCpPARbQXNz6BHPzdwQ=
 modernc.org/libc v1.22.4/go.mod h1:jj+Z7dTNX8fBScMVNRAYZ/jF91K8fdT2hYMThc3YjBY=
 modernc.org/mathutil v1.5.0 h1:rV0Ko/6SfM+8G+yKiyI830l3Wuz1zRutdslNoQ0kfiQ=
