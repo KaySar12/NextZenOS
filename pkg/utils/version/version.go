@@ -14,8 +14,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/KaySar12/NextZenOS/common"
-	"github.com/KaySar12/NextZenOS/model"
+	"github.com/IceWhaleTech/CasaOS/common"
+	"github.com/IceWhaleTech/CasaOS/model"
 )
 
 func IsNeedUpdate(version model.Version) (bool, model.Version) {

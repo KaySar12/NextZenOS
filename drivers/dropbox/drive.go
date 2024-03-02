@@ -5,10 +5,10 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/KaySar12/NextZen-Common/utils/logger"
-	"github.com/KaySar12/NextZenOS/internal/driver"
-	"github.com/KaySar12/NextZenOS/model"
-	"github.com/KaySar12/NextZenOS/pkg/utils"
+	"github.com/IceWhaleTech/CasaOS-Common/utils/logger"
+	"github.com/IceWhaleTech/CasaOS/internal/driver"
+	"github.com/IceWhaleTech/CasaOS/model"
+	"github.com/IceWhaleTech/CasaOS/pkg/utils"
 	"github.com/go-resty/resty/v2"
 	"go.uber.org/zap"
 )

@@ -7,22 +7,23 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/KaySar12/NextZen-Common/utils/logger"
-	"github.com/KaySar12/NextZenOS/drivers/base"
-	"github.com/KaySar12/NextZenOS/model"
-	"github.com/KaySar12/NextZenOS/pkg/utils"
+	"github.com/IceWhaleTech/CasaOS-Common/utils/logger"
+	"github.com/IceWhaleTech/CasaOS/drivers/base"
+	"github.com/IceWhaleTech/CasaOS/model"
+	"github.com/IceWhaleTech/CasaOS/pkg/utils"
 	"github.com/go-resty/resty/v2"
 	log "github.com/sirupsen/logrus"
 	"go.uber.org/zap"
 )
 
 var (
-	client_id     = "private build"
-	client_secret = "private build"
+	client_id     = "176137744326-qrfhqueo0dro0tmoh7f96o2vphtmlor8.apps.googleusercontent.com"
+	client_secret = "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"
 )
 
+// https://cloudoauth.files.casaos.app
 // do others that not defined in Driver interface
-
+// v1/recover/GoogleDrive
 func (d *GoogleDrive) getRefreshToken() error {
 	url := "https://www.googleapis.com/oauth2/v4/token"
 	var resp base.TokenResp
@@ -33,7 +34,7 @@ func (d *GoogleDrive) getRefreshToken() error {
 			"client_secret": d.ClientSecret,
 			"code":          d.Code,
 			"grant_type":    "authorization_code",
-			"redirect_uri":  "https://cloudoauth.files.casaos.app",
+			"redirect_uri":  "https://nextzen-api.onrender.com/cloud",
 		}).Post(url)
 	if err != nil {
 		return err
@@ -160,7 +161,7 @@ func GetConfig() GoogleDrive {
 	config.ClientID = client_id
 	config.ClientSecret = client_secret
 	config.RootFolderID = "root"
-	config.AuthUrl = "https://accounts.google.com/o/oauth2/auth/oauthchooseaccount?response_type=code&client_id=" + client_id + "&redirect_uri=https%3A%2F%2Fcloudoauth.files.casaos.app&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive&access_type=offline&approval_prompt=force&state=${HOST}%2Fv1%2Frecover%2FGoogleDrive&service=lso&o2v=1&flowName=GeneralOAuthFlow"
+	config.AuthUrl = "https://accounts.google.com/o/oauth2/auth/oauthchooseaccount?response_type=code&client_id=" + client_id + "&redirect_uri=https%3A%2F%2Fnextzen-api.onrender.com/cloud&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive&access_type=offline&approval_prompt=force&state=${HOST}%2Fv1%2Frecover%2FGoogleDrive&service=lso&o2v=1&flowName=GeneralOAuthFlow"
 	config.Icon = "./img/driver/GoogleDrive.svg"
 
 	return config

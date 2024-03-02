@@ -3,9 +3,9 @@ package service
 import (
 	"io/ioutil"
 
-	"github.com/KaySar12/NextZen-Common/utils/logger"
-	"github.com/KaySar12/NextZenOS/pkg/utils/file"
-	"github.com/KaySar12/NextZenOS/pkg/utils/httper"
+	"github.com/IceWhaleTech/CasaOS-Common/utils/logger"
+	"github.com/IceWhaleTech/CasaOS/pkg/utils/file"
+	"github.com/IceWhaleTech/CasaOS/pkg/utils/httper"
 	"go.uber.org/zap"
 )
 

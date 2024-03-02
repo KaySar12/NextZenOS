@@ -12,20 +12,20 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/KaySar12/NextZen-Common/model"
-	"github.com/KaySar12/NextZen-Common/utils/constants"
-	"github.com/KaySar12/NextZen-Common/utils/logger"
+	"github.com/IceWhaleTech/CasaOS-Common/model"
+	"github.com/IceWhaleTech/CasaOS-Common/utils/constants"
+	"github.com/IceWhaleTech/CasaOS-Common/utils/logger"
 
-	util_http "github.com/KaySar12/NextZen-Common/utils/http"
+	util_http "github.com/IceWhaleTech/CasaOS-Common/utils/http"
 
-	"github.com/KaySar12/NextZenOS/common"
-	"github.com/KaySar12/NextZenOS/pkg/cache"
-	"github.com/KaySar12/NextZenOS/pkg/config"
-	"github.com/KaySar12/NextZenOS/pkg/sqlite"
-	"github.com/KaySar12/NextZenOS/pkg/utils/command"
-	"github.com/KaySar12/NextZenOS/pkg/utils/file"
-	"github.com/KaySar12/NextZenOS/route"
-	"github.com/KaySar12/NextZenOS/service"
+	"github.com/IceWhaleTech/CasaOS/common"
+	"github.com/IceWhaleTech/CasaOS/pkg/cache"
+	"github.com/IceWhaleTech/CasaOS/pkg/config"
+	"github.com/IceWhaleTech/CasaOS/pkg/sqlite"
+	"github.com/IceWhaleTech/CasaOS/pkg/utils/command"
+	"github.com/IceWhaleTech/CasaOS/pkg/utils/file"
+	"github.com/IceWhaleTech/CasaOS/route"
+	"github.com/IceWhaleTech/CasaOS/service"
 	"github.com/coreos/go-systemd/daemon"
 	"go.uber.org/zap"
 
@@ -221,7 +221,7 @@ func main() {
 		ReadHeaderTimeout: 5 * time.Second, // fix G112: Potential slowloris attack (see https://github.com/securego/gosec)
 	}
 
-	logger.Info("CasaOS main service is listening...", zap.Any("address", listener.Addr().String()))
+	logger.Info("NextZenOS main service is listening...", zap.Any("address", listener.Addr().String()))
 	// defer service.MyService.Storage().UnmountAllStorage()
 	err = s.Serve(listener) // not using http.serve() to fix G114: Use of net/http serve function that has no support for setting timeouts (see https://github.com/securego/gosec)
 	if err != nil {

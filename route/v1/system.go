@@ -14,16 +14,16 @@ import (
 	"time"
 	"unsafe"
 
-	http2 "github.com/KaySar12/NextZen-Common/utils/http"
-	"github.com/KaySar12/NextZen-Common/utils/port"
-	"github.com/KaySar12/NextZenOS/common"
-	"github.com/KaySar12/NextZenOS/model"
-	"github.com/KaySar12/NextZenOS/pkg/config"
-	"github.com/KaySar12/NextZenOS/pkg/utils/common_err"
-	"github.com/KaySar12/NextZenOS/pkg/utils/version"
-	"github.com/KaySar12/NextZenOS/service"
-	model2 "github.com/KaySar12/NextZenOS/service/model"
-	"github.com/KaySar12/NextZenOS/types"
+	http2 "github.com/IceWhaleTech/CasaOS-Common/utils/http"
+	"github.com/IceWhaleTech/CasaOS-Common/utils/port"
+	"github.com/IceWhaleTech/CasaOS/common"
+	"github.com/IceWhaleTech/CasaOS/model"
+	"github.com/IceWhaleTech/CasaOS/pkg/config"
+	"github.com/IceWhaleTech/CasaOS/pkg/utils/common_err"
+	"github.com/IceWhaleTech/CasaOS/pkg/utils/version"
+	"github.com/IceWhaleTech/CasaOS/service"
+	model2 "github.com/IceWhaleTech/CasaOS/service/model"
+	"github.com/IceWhaleTech/CasaOS/types"
 	"github.com/gin-gonic/gin"
 	"github.com/tidwall/gjson"
 )
@@ -79,6 +79,18 @@ func SystemUpdate(c *gin.Context) {
 func GetCasaOSErrorLogs(c *gin.Context) {
 	line, _ := strconv.Atoi(c.DefaultQuery("line", "100"))
 	c.JSON(common_err.SUCCESS, model.Result{Success: common_err.SUCCESS, Message: common_err.GetMsg(common_err.SUCCESS), Data: service.MyService.System().GetCasaOSLogs(line)})
+}
+func GetUserServiceErrorLogs(c *gin.Context) {
+	line, _ := strconv.Atoi(c.DefaultQuery("line", "100"))
+	c.JSON(common_err.SUCCESS, model.Result{Success: common_err.SUCCESS, Message: common_err.GetMsg(common_err.SUCCESS), Data: service.MyService.System().GetUserServiceLogs(line)})
+}
+func GetGateWayErrorLogs(c *gin.Context) {
+	line, _ := strconv.Atoi(c.DefaultQuery("line", "100"))
+	c.JSON(common_err.SUCCESS, model.Result{Success: common_err.SUCCESS, Message: common_err.GetMsg(common_err.SUCCESS), Data: service.MyService.System().GetGateWayLogs(line)})
+}
+func GetAppManagementLogs(c *gin.Context) {
+	line, _ := strconv.Atoi(c.DefaultQuery("line", "100"))
+	c.JSON(common_err.SUCCESS, model.Result{Success: common_err.SUCCESS, Message: common_err.GetMsg(common_err.SUCCESS), Data: service.MyService.System().GetAppManagementLogs(line)})
 }
 
 // 系统配置
@@ -182,6 +194,7 @@ func GetSystemHardwareInfo(c *gin.Context) {
 	data["arch"] = runtime.GOARCH
 
 	if cpu := service.MyService.System().GetCpuInfo(); len(cpu) > 0 {
+
 		c.JSON(common_err.SUCCESS,
 			model.Result{
 				Success: common_err.SUCCESS,

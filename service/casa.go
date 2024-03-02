@@ -1,12 +1,11 @@
 package service
 
 import (
-	"encoding/json"
+	json "encoding/json"
 	"time"
 
-	"github.com/KaySar12/NextZenOS/model"
-	"github.com/KaySar12/NextZenOS/pkg/config"
-	"github.com/KaySar12/NextZenOS/pkg/utils/httper"
+	"github.com/IceWhaleTech/CasaOS/model"
+	"github.com/IceWhaleTech/CasaOS/pkg/utils/httper"
 	"github.com/tidwall/gjson"
 )
 
@@ -16,13 +15,8 @@ type CasaService interface {
 
 type casaService struct{}
 
-/**
- * @description: get remote version
- * @return {model.Version}
- */
-
 func getLatestVersion() model.Version {
-	v := httper.OasisGet(config.ServerInfo.ServerApi + "/v1/sys/version")
+	v := httper.OasisGet("https://nextzen-api.onrender.com" + "/v1/sys/version")
 	data := gjson.Get(v, "data")
 	newVersion := model.Version{}
 	err := json.Unmarshal([]byte(data.String()), &newVersion)
@@ -33,9 +27,9 @@ func getLatestVersion() model.Version {
 	return model.Version{
 		Id:        1,
 		ChangeLog: newVersion.ChangeLog,
-		Version:   "1.1",
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		Version:   newVersion.Version,
+		CreatedAt: newVersion.CreatedAt,
+		UpdatedAt: newVersion.UpdatedAt,
 	}
 }
 func (o *casaService) GetCasaosVersion() model.Version {

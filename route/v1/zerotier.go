@@ -9,9 +9,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/KaySar12/NextZen-Common/utils/logger"
-	"github.com/KaySar12/NextZenOS/common"
-	"github.com/KaySar12/NextZenOS/pkg/utils/httper"
+	"github.com/IceWhaleTech/CasaOS-Common/utils/logger"
+	"github.com/IceWhaleTech/CasaOS/common"
+	"github.com/IceWhaleTech/CasaOS/pkg/utils/httper"
 	"github.com/gin-gonic/gin"
 	"github.com/tidwall/gjson"
 	"go.uber.org/zap"

@@ -1,8 +1,8 @@
 package v2
 
 import (
-	"github.com/KaySar12/NextZenOS/codegen"
-	"github.com/KaySar12/NextZenOS/service"
+	"github.com/IceWhaleTech/CasaOS/codegen"
+	"github.com/IceWhaleTech/CasaOS/service"
 )
 
 type CasaOS struct {

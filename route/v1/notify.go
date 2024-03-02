@@ -3,9 +3,9 @@ package v1
 import (
 	"net/http"
 
-	"github.com/KaySar12/NextZenOS/model"
-	"github.com/KaySar12/NextZenOS/pkg/utils/common_err"
-	"github.com/KaySar12/NextZenOS/service"
+	"github.com/IceWhaleTech/CasaOS/model"
+	"github.com/IceWhaleTech/CasaOS/pkg/utils/common_err"
+	"github.com/IceWhaleTech/CasaOS/service"
 	"github.com/gin-gonic/gin"
 )
 

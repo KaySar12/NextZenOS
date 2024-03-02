@@ -19,9 +19,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/KaySar12/NextZen-Common/utils/logger"
-	"github.com/KaySar12/NextZenOS/model"
-	"github.com/KaySar12/NextZenOS/pkg/utils/file"
+	"github.com/IceWhaleTech/CasaOS-Common/utils/logger"
+	"github.com/IceWhaleTech/CasaOS/model"
+	"github.com/IceWhaleTech/CasaOS/pkg/utils/file"
 	"github.com/moby/sys/mountinfo"
 	"go.uber.org/zap"
 )

@@ -1,9 +1,9 @@
 package drivers
 
 import (
-	_ "github.com/KaySar12/NextZenOS/drivers/dropbox"
-	_ "github.com/KaySar12/NextZenOS/drivers/google_drive"
-	_ "github.com/KaySar12/NextZenOS/drivers/onedrive"
+	_ "github.com/IceWhaleTech/CasaOS/drivers/dropbox"
+	_ "github.com/IceWhaleTech/CasaOS/drivers/google_drive"
+	_ "github.com/IceWhaleTech/CasaOS/drivers/onedrive"
 )
 
 // All do nothing,just for import

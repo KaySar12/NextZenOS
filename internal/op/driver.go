@@ -4,9 +4,9 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/KaySar12/NextZenOS/internal/conf"
+	"github.com/IceWhaleTech/CasaOS/internal/conf"
 
-	"github.com/KaySar12/NextZenOS/internal/driver"
+	"github.com/IceWhaleTech/CasaOS/internal/driver"
 	"github.com/pkg/errors"
 )
 

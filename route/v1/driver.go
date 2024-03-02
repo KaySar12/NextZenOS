@@ -1,11 +1,11 @@
 package v1
 
 import (
-	"github.com/KaySar12/NextZen-Common/utils/common_err"
-	"github.com/KaySar12/NextZenOS/drivers/dropbox"
-	"github.com/KaySar12/NextZenOS/drivers/google_drive"
-	"github.com/KaySar12/NextZenOS/drivers/onedrive"
-	"github.com/KaySar12/NextZenOS/model"
+	"github.com/IceWhaleTech/CasaOS-Common/utils/common_err"
+	"github.com/IceWhaleTech/CasaOS/drivers/dropbox"
+	"github.com/IceWhaleTech/CasaOS/drivers/google_drive"
+	"github.com/IceWhaleTech/CasaOS/drivers/onedrive"
+	"github.com/IceWhaleTech/CasaOS/model"
 	"github.com/gin-gonic/gin"
 )
 

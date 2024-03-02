@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/KaySar12/NextZen-Common/utils/logger"
+	"github.com/IceWhaleTech/CasaOS-Common/utils/logger"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/zap"
 )

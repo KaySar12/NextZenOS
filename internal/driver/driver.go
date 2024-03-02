@@ -3,7 +3,7 @@ package driver
 import (
 	"context"
 
-	"github.com/KaySar12/NextZenOS/model"
+	"github.com/IceWhaleTech/CasaOS/model"
 )
 
 type Driver interface {

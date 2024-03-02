@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/KaySar12/NextZen-Common/utils"
-	"github.com/KaySar12/NextZenOS/codegen"
-	"github.com/KaySar12/NextZenOS/common"
-	"github.com/KaySar12/NextZenOS/pkg/utils/httper"
+	"github.com/IceWhaleTech/CasaOS-Common/utils"
+	"github.com/IceWhaleTech/CasaOS/codegen"
+	"github.com/IceWhaleTech/CasaOS/common"
+	"github.com/IceWhaleTech/CasaOS/pkg/utils/httper"
 	"github.com/labstack/echo/v4"
 	"github.com/tidwall/gjson"
 )

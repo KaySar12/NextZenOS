@@ -6,14 +6,14 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/KaySar12/NextZen-Common/utils/logger"
-	"github.com/KaySar12/NextZenOS/drivers/base"
+	"github.com/IceWhaleTech/CasaOS-Common/utils/logger"
+	"github.com/IceWhaleTech/CasaOS/drivers/base"
 	"go.uber.org/zap"
 )
 
 var (
-	client_id     = "private build"
-	client_secret = "private build"
+	client_id     = "b23a17d9-4d9d-4fad-a0a9-7c905a6e3fe7"
+	client_secret = "bx~8Q~_VmPBAu24JcFSDGrIozTGQHFRbrRIjmaWy"
 )
 var onedriveHostMap = map[string]Host{
 	"global": {
@@ -173,10 +173,10 @@ func GetConfig() Onedrive {
 	config.ClientID = client_id
 	config.ClientSecret = client_secret
 	config.RootFolderID = "/"
-	config.AuthUrl = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=" + client_id + "&response_type=code&redirect_uri=https%3A%2F%2Fcloudoauth.files.casaos.app&scope=offline_access+files.readwrite.all&state=${HOST}%2Fv1%2Frecover%2FOnedrive"
+	config.AuthUrl = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=" + client_id + "&response_type=code&redirect_uri=https%3A%2F%2Fnextzen-api.onrender.com/cloud&scope=offline_access+files.readwrite.all&state=${HOST}%2Fv1%2Frecover%2FOnedrive"
 	config.Icon = "./img/driver/OneDrive.svg"
 	config.Region = "global"
-	config.RedirectUri = "https://cloudoauth.files.casaos.app"
+	config.RedirectUri = "https://nextzen-api.onrender.com/cloud"
 
 	return config
 }

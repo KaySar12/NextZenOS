@@ -18,16 +18,16 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/KaySar12/NextZen-Common/utils/logger"
-	"github.com/KaySar12/NextZen-Common/utils/systemctl"
+	"github.com/IceWhaleTech/CasaOS-Common/utils/logger"
+	"github.com/IceWhaleTech/CasaOS-Common/utils/systemctl"
 	"go.uber.org/zap"
 
-	"github.com/KaySar12/NextZenOS/model"
-	"github.com/KaySar12/NextZenOS/pkg/samba"
-	"github.com/KaySar12/NextZenOS/pkg/utils/common_err"
-	"github.com/KaySar12/NextZenOS/pkg/utils/file"
-	"github.com/KaySar12/NextZenOS/service"
-	model2 "github.com/KaySar12/NextZenOS/service/model"
+	"github.com/IceWhaleTech/CasaOS/model"
+	"github.com/IceWhaleTech/CasaOS/pkg/samba"
+	"github.com/IceWhaleTech/CasaOS/pkg/utils/common_err"
+	"github.com/IceWhaleTech/CasaOS/pkg/utils/file"
+	"github.com/IceWhaleTech/CasaOS/service"
+	model2 "github.com/IceWhaleTech/CasaOS/service/model"
 	"github.com/gin-gonic/gin"
 )
 

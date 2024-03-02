@@ -13,7 +13,7 @@ package config
 import (
 	"path/filepath"
 
-	"github.com/KaySar12/NextZen-Common/utils/constants"
+	"github.com/IceWhaleTech/CasaOS-Common/utils/constants"
 )
 
 var CasaOSConfigFilePath = filepath.Join(constants.DefaultConfigPath, "casaos.conf")

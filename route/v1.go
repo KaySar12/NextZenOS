@@ -4,13 +4,12 @@ import (
 	"crypto/ecdsa"
 	"os"
 
-	"github.com/KaySar12/NextZen-Common/external"
-	"github.com/KaySar12/NextZen-Common/middleware"
-	"github.com/KaySar12/NextZen-Common/utils/jwt"
-	"github.com/KaySar12/NextZenOS/common"
-	"github.com/KaySar12/NextZenOS/pkg/config"
-	v1 "github.com/KaySar12/NextZenOS/route/v1"
-
+	"github.com/IceWhaleTech/CasaOS-Common/external"
+	"github.com/IceWhaleTech/CasaOS-Common/middleware"
+	"github.com/IceWhaleTech/CasaOS-Common/utils/jwt"
+	"github.com/IceWhaleTech/CasaOS/common"
+	"github.com/IceWhaleTech/CasaOS/pkg/config"
+	v1 "github.com/IceWhaleTech/CasaOS/route/v1"
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 )
@@ -34,7 +33,6 @@ func InitV1Router() *gin.Engine {
 	}
 
 	r.GET("/v1/sys/debug", v1.GetSystemConfigDebug) // //debug
-
 	r.GET("/v1/sys/version/check", v1.GetSystemCheckVersion)
 	r.GET("/v1/sys/version/current", func(ctx *gin.Context) {
 		ctx.String(200, common.VERSION)
@@ -61,7 +59,12 @@ func InitV1Router() *gin.Engine {
 			v1SysGroup.POST("/ssh-login", v1.PostSshLogin)
 			// v1SysGroup.GET("/config", v1.GetSystemConfig) //delete
 			// v1SysGroup.POST("/config", v1.PostSetSystemConfig)
-			v1SysGroup.GET("/logs", v1.GetCasaOSErrorLogs) // error/logs
+			v1SysGroup.GET("/logs", v1.GetCasaOSErrorLogs)                   // main/error/logs
+			v1SysGroup.GET("/user-service-logs", v1.GetUserServiceErrorLogs) // users/error/logs
+			v1SysGroup.GET("/gateway-logs", v1.GetGateWayErrorLogs)          // gateway/error/logs
+			v1SysGroup.GET("/app-management-logs", v1.GetAppManagementLogs)
+
+			//GetAppManagement
 			// v1SysGroup.GET("/widget/config", v1.GetWidgetConfig)//delete
 			// v1SysGroup.POST("/widget/config", v1.PostSetWidgetConfig)//delete
 

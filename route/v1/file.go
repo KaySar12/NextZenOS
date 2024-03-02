@@ -17,16 +17,16 @@ import (
 	"sync"
 	"time"
 
-	"github.com/KaySar12/NextZen-Common/utils/logger"
-	"github.com/KaySar12/NextZenOS/model"
+	"github.com/IceWhaleTech/CasaOS-Common/utils/logger"
+	"github.com/IceWhaleTech/CasaOS/model"
 	"github.com/gorilla/websocket"
 	"github.com/robfig/cron/v3"
 	"github.com/tidwall/gjson"
 
-	"github.com/KaySar12/NextZenOS/pkg/utils/common_err"
-	"github.com/KaySar12/NextZenOS/pkg/utils/file"
-	"github.com/KaySar12/NextZenOS/service"
-	model2 "github.com/KaySar12/NextZenOS/service/model"
+	"github.com/IceWhaleTech/CasaOS/pkg/utils/common_err"
+	"github.com/IceWhaleTech/CasaOS/pkg/utils/file"
+	"github.com/IceWhaleTech/CasaOS/service"
+	model2 "github.com/IceWhaleTech/CasaOS/service/model"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"

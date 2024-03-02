@@ -15,12 +15,12 @@ import (
 	"fmt"
 	"os"
 
-	interfaces "github.com/KaySar12/NextZen-Common"
-	"github.com/KaySar12/NextZen-Common/utils/systemctl"
-	"github.com/KaySar12/NextZenOS/common"
-	"github.com/KaySar12/NextZenOS/pkg/config"
-	"github.com/KaySar12/NextZenOS/pkg/sqlite"
-	"github.com/KaySar12/NextZenOS/service"
+	interfaces "github.com/IceWhaleTech/CasaOS-Common"
+	"github.com/IceWhaleTech/CasaOS-Common/utils/systemctl"
+	"github.com/IceWhaleTech/CasaOS/common"
+	"github.com/IceWhaleTech/CasaOS/pkg/config"
+	"github.com/IceWhaleTech/CasaOS/pkg/sqlite"
+	"github.com/IceWhaleTech/CasaOS/service"
 	"gorm.io/gorm"
 )
 

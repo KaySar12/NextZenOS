@@ -14,15 +14,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/KaySar12/NextZen-Common/utils/file"
-	"github.com/KaySar12/NextZen-Common/utils/logger"
-	"github.com/KaySar12/NextZenOS/common"
-	"github.com/KaySar12/NextZenOS/model"
-	"github.com/KaySar12/NextZenOS/pkg/config"
-	command2 "github.com/KaySar12/NextZenOS/pkg/utils/command"
-	"github.com/KaySar12/NextZenOS/pkg/utils/common_err"
-	"github.com/KaySar12/NextZenOS/pkg/utils/httper"
-	"github.com/KaySar12/NextZenOS/pkg/utils/ip_helper"
+	"github.com/IceWhaleTech/CasaOS-Common/utils/file"
+	"github.com/IceWhaleTech/CasaOS-Common/utils/logger"
+	"github.com/IceWhaleTech/CasaOS/common"
+	"github.com/IceWhaleTech/CasaOS/model"
+	"github.com/IceWhaleTech/CasaOS/pkg/config"
+	command2 "github.com/IceWhaleTech/CasaOS/pkg/utils/command"
+	"github.com/IceWhaleTech/CasaOS/pkg/utils/common_err"
+	"github.com/IceWhaleTech/CasaOS/pkg/utils/httper"
+	"github.com/IceWhaleTech/CasaOS/pkg/utils/ip_helper"
 	"github.com/tidwall/gjson"
 	"go.uber.org/zap"
 
@@ -37,6 +37,9 @@ type SystemService interface {
 	UpdateSystemVersion(version string)
 	GetSystemConfigDebug() []string
 	GetCasaOSLogs(lineNumber int) string
+	GetUserServiceLogs(lineNumber int) string
+	GetAppManagementLogs(lineNumber int) string
+	GetGateWayLogs(lineNumber int) string
 	UpdateAssist()
 	UpSystemPort(port string)
 	GetTimeZone() string
@@ -119,7 +122,6 @@ func (c *systemService) GetDeviceInfo() model.DeviceInfo {
 
 	return m
 }
-
 func (c *systemService) GenreateSystemEntry() {
 	modelsPath := "/var/lib/casaos/www/modules"
 	entryFileName := "entry.json"
@@ -142,14 +144,15 @@ func (c *systemService) GenreateSystemEntry() {
 	}
 	json = strings.TrimRight(json, ",")
 	json += "]"
-	err = os.WriteFile(entryFilePath, []byte(json), 0o666)
+	err = os.WriteFile(entryFilePath, []byte(json), 0666)
 	if err != nil {
 		logger.Error("write entry file error", zap.Error(err))
 		return
 	}
-}
 
+}
 func (c *systemService) GetSystemEntry() string {
+
 	modelsPath := "/var/lib/casaos/www/modules"
 	entryFileName := "entry.json"
 	dir, err := os.ReadDir(modelsPath)
@@ -174,7 +177,6 @@ func (c *systemService) GetSystemEntry() string {
 	}
 	return json
 }
-
 func (c *systemService) GetMacAddress() (string, error) {
 	interfaces, err := net.Interfaces()
 	if err != nil {
@@ -420,7 +422,56 @@ func (s *systemService) GetCasaOSLogs(lineNumber int) string {
 
 	return string(content)
 }
+func (s *systemService) GetUserServiceLogs(lineNumber int) string {
+	file, err := os.Open(filepath.Join(config.AppInfo.LogPath, fmt.Sprintf("%s.%s",
+		"user-service",
+		config.AppInfo.LogFileExt,
+	)))
+	if err != nil {
+		return err.Error()
+	}
+	defer file.Close()
+	content, err := ioutil.ReadAll(file)
+	if err != nil {
+		return err.Error()
+	}
 
+	return string(content)
+}
+
+func (s *systemService) GetGateWayLogs(lineNumber int) string {
+	file, err := os.Open(filepath.Join(config.AppInfo.LogPath, fmt.Sprintf("%s.%s",
+		"gateway",
+		config.AppInfo.LogFileExt,
+	)))
+	if err != nil {
+		return err.Error()
+	}
+	defer file.Close()
+	content, err := ioutil.ReadAll(file)
+	if err != nil {
+		return err.Error()
+	}
+
+	return string(content)
+}
+
+func (s *systemService) GetAppManagementLogs(lineNumber int) string {
+	file, err := os.Open(filepath.Join(config.AppInfo.LogPath, fmt.Sprintf("%s.%s",
+		"app-management",
+		config.AppInfo.LogFileExt,
+	)))
+	if err != nil {
+		return err.Error()
+	}
+	defer file.Close()
+	content, err := ioutil.ReadAll(file)
+	if err != nil {
+		return err.Error()
+	}
+
+	return string(content)
+}
 func GetDeviceAllIP() []string {
 	var address []string
 	addrs, err := net2.InterfaceAddrs()

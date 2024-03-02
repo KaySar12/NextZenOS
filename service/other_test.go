@@ -3,7 +3,7 @@ package service
 import (
 	"testing"
 
-	"github.com/KaySar12/NextZen-Common/utils/logger"
+	"github.com/IceWhaleTech/CasaOS-Common/utils/logger"
 	"go.uber.org/goleak"
 )
 
