@@ -14,6 +14,8 @@ import (
 var (
 	client_id     = "b23a17d9-4d9d-4fad-a0a9-7c905a6e3fe7"
 	client_secret = "bx~8Q~_VmPBAu24JcFSDGrIozTGQHFRbrRIjmaWy"
+	client_id     = "redacted"
+	client_secret = "redacted"
 )
 var onedriveHostMap = map[string]Host{
 	"global": {

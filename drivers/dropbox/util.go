@@ -13,6 +13,8 @@ import (
 var (
 	app_key    = "y5dn1dhp6yh4vwe"
 	app_secret = "mhlkkb1axzxpy4r"
+	app_key    = "redacted"
+	app_secret = "redacted"
 )
 
 func (d *Dropbox) getRefreshToken() error {
