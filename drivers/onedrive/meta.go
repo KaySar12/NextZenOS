@@ -25,8 +25,8 @@ type RespErr struct {
 type Addition struct {
 	Region       string `json:"region" type:"select" required:"true" options:"global,cn,us,de" default:"global"`
 	IsSharepoint bool   `json:"is_sharepoint"`
-	ClientID     string `json:"client_id" default:"b23a17d9-4d9d-4fad-a0a9-7c905a6e3fe7" required:"true"`
-	ClientSecret string `json:"client_secret" default:"bx~8Q~_VmPBAu24JcFSDGrIozTGQHFRbrRIjmaW" required:"true"`
+	ClientID     string `json:"client_id" required:"true"`
+	ClientSecret string `json:"client_secret" required:"true"`
 	RedirectUri  string `json:"redirect_uri" required:"true" default:""`
 	RefreshToken string `json:"refresh_token" required:"true"`
 	SiteId       string `json:"site_id"`

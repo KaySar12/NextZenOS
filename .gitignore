@@ -41,5 +41,19 @@ CasaOS
 
 # System Files
 .DS_Store
+build/scripts/setup/script.d/03-setup-casaos.sh
 build/scripts/setup/service.d/casaos/debian/bullseye/setup-casaos.sh
-*.sh
+build/scripts/setup/script.d/03-setup-casaos.sh
+build/scripts/setup/service.d/casaos/debian/bullseye/setup-casaos.sh
+build/scripts/setup/service.d/casaos/ubuntu/jammy/setup-casaos.sh
+build/scripts/setup/service.d/casaos/ubuntu/setup-casaos.sh
+build/sysroot/usr/share/casaos/cleanup/service.d/casaos/debian/bullseye/cleanup-casaos.sh
+build/sysroot/usr/share/casaos/cleanup/service.d/casaos/ubuntu/cleanup-casaos.sh
+build/sysroot/usr/share/casaos/cleanup/service.d/casaos/ubuntu/jammy/cleanup-casaos.sh
+build/scripts/setup/script.d/03-setup-casaos.sh
+build/scripts/setup/service.d/casaos/debian/bullseye/setup-casaos.sh
+build/scripts/setup/service.d/casaos/ubuntu/jammy/setup-casaos.sh
+build/scripts/setup/service.d/casaos/ubuntu/setup-casaos.sh
+build/sysroot/usr/share/casaos/cleanup/service.d/casaos/debian/bullseye/cleanup-casaos.sh
+build/sysroot/usr/share/casaos/cleanup/service.d/casaos/ubuntu/cleanup-casaos.sh
+build/sysroot/usr/share/casaos/cleanup/service.d/casaos/ubuntu/jammy/cleanup-casaos.sh

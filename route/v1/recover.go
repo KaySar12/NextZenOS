@@ -223,7 +223,7 @@ func GetRecoverStorage(c *gin.Context) {
 		dmap := make(map[string]string)
 		dmap["username"] = username
 
-		//configs, err := service.MyService.Storage().GetConfig()
+		configs, err := service.MyService.Storage().GetConfig()
 		if err != nil {
 			c.String(200, `<p>Failed to get rclone config:`+err.Error()+`</p><script>window.close()</script>`)
 			notify["status"] = "fail"
@@ -232,26 +232,25 @@ func GetRecoverStorage(c *gin.Context) {
 			service.MyService.Notify().SendNotify("casaos:file:recover", notify)
 			return
 		}
-		//Why is this not working
-		// for _, v := range configs.Remotes {
-		// 	cf, err := service.MyService.Storage().GetConfigByName(v)
-		// 	if err != nil {
-		// 		logger.Error("then get config by name error: ", zap.Error(err), zap.Any("name", v))
-		// 		continue
-		// 	}
-		// 	if cf["type"] == "onedrive" && cf["username"] == dmap["username"] {
-		// 		c.String(200, `<p>The same configuration has been added</p><script>window.close()</script>`)
-		// 		err := service.MyService.Storage().CheckAndMountByName(v)
-		// 		if err != nil {
-		// 			logger.Error("check and mount by name error: ", zap.Error(err), zap.Any("name", cf["username"]))
-		// 		}
+		for _, v := range configs.Remotes {
+			cf, err := service.MyService.Storage().GetConfigByName(v)
+			if err != nil {
+				logger.Error("then get config by name error: ", zap.Error(err), zap.Any("name", v))
+				continue
+			}
+			if cf["type"] == "onedrive" && cf["username"] == dmap["username"] {
+				c.String(200, `<p>The same configuration has been added</p><script>window.close()</script>`)
+				err := service.MyService.Storage().CheckAndMountByName(v)
+				if err != nil {
+					logger.Error("check and mount by name error: ", zap.Error(err), zap.Any("name", cf["username"]))
+				}
 
-		// 		notify["status"] = "warn"
-		// 		notify["message"] = "The same configuration has been added"
-		// 		service.MyService.Notify().SendNotify("casaos:file:recover", notify)
-		// 		return
-		// 	}
-		// }
+				notify["status"] = "warn"
+				notify["message"] = "The same configuration has been added"
+				service.MyService.Notify().SendNotify("casaos:file:recover", notify)
+				return
+			}
+		}
 		if len(username) > 0 {
 			a := strings.Split(username, "@")
 			username = a[0]

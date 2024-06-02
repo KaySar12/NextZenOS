@@ -221,7 +221,7 @@ func main() {
 		ReadHeaderTimeout: 5 * time.Second, // fix G112: Potential slowloris attack (see https://github.com/securego/gosec)
 	}
 
-	logger.Info("NextZenOS main service is listening...", zap.Any("address", listener.Addr().String()))
+	logger.Info("CasaOS main service is listening...", zap.Any("address", listener.Addr().String()))
 	// defer service.MyService.Storage().UnmountAllStorage()
 	err = s.Serve(listener) // not using http.serve() to fix G114: Use of net/http serve function that has no support for setting timeouts (see https://github.com/securego/gosec)
 	if err != nil {
