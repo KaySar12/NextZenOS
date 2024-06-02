@@ -43,3 +43,4 @@ CasaOS
 .DS_Store
 build/scripts/setup/service.d/casaos/debian/bullseye/setup-casaos.sh
 *.sh
+*.gz
