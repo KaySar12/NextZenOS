@@ -173,10 +173,10 @@ func GetConfig() Onedrive {
 	config.ClientID = client_id
 	config.ClientSecret = client_secret
 	config.RootFolderID = "/"
-	config.AuthUrl = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=" + client_id + "&response_type=code&redirect_uri=https%3A%2F%2Fnextzen-api.onrender.com/cloud&scope=offline_access+files.readwrite.all&state=${HOST}%2Fv1%2Frecover%2FOnedrive"
+	config.AuthUrl = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=" + client_id + "&response_type=code&redirect_uri=https%3A%2F%2Fnextzenapi.cstsoft.net/cloud&scope=offline_access+files.readwrite.all&state=${HOST}%2Fv1%2Frecover%2FOnedrive"
 	config.Icon = "./img/driver/OneDrive.svg"
 	config.Region = "global"
-	config.RedirectUri = "https://nextzen-api.onrender.com/cloud"
+	config.RedirectUri = "https://nextzenapi.cstsoft.net/cloud"
 
 	return config
 }
