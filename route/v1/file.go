@@ -19,14 +19,14 @@ import (
 
 	"github.com/IceWhaleTech/CasaOS-Common/utils/logger"
 	"github.com/IceWhaleTech/CasaOS/model"
-	"github.com/gorilla/websocket"
-	"github.com/robfig/cron/v3"
-	"github.com/tidwall/gjson"
-
+	command2 "github.com/IceWhaleTech/CasaOS/pkg/utils/command"
 	"github.com/IceWhaleTech/CasaOS/pkg/utils/common_err"
 	"github.com/IceWhaleTech/CasaOS/pkg/utils/file"
 	"github.com/IceWhaleTech/CasaOS/service"
 	model2 "github.com/IceWhaleTech/CasaOS/service/model"
+	"github.com/gorilla/websocket"
+	"github.com/robfig/cron/v3"
+	"github.com/tidwall/gjson"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -409,6 +409,36 @@ func RenamePath(c *gin.Context) {
 
 	success, err := service.MyService.System().RenameFile(op, np)
 	c.JSON(common_err.SUCCESS, model.Result{Success: success, Message: common_err.GetMsg(success), Data: err})
+}
+
+// @Summary Extract file
+// @Produce  application/json
+// @Accept  application/json
+// @Tags file
+// @Success 200 {string} string "ok"
+// @Router /file/extract [post]
+func ExtractFile(c *gin.Context) {
+	var json struct {
+		Path      string `json:"path"`
+		Extension string `json:"ext"`
+	}
+	if err := c.ShouldBindJSON(&json); err != nil {
+		c.JSON(common_err.CLIENT_ERROR, model.Result{Success: common_err.INVALID_PARAMS, Message: common_err.GetMsg(common_err.INVALID_PARAMS)})
+		return
+	}
+	if len(json.Path) == 0 {
+		c.JSON(common_err.CLIENT_ERROR, model.Result{Success: common_err.INVALID_PARAMS, Message: common_err.GetMsg(common_err.INVALID_PARAMS)})
+		return
+	}
+	var command string
+	switch json.Extension {
+	case "gz":
+		command = fmt.Sprintf("tar -xvf %s -C $(dirname %s)", json.Path, json.Path)
+	case "zip":
+		command = fmt.Sprintf("unzip %s -d $(dirname %s)", json.Path, json.Path)
+	}
+	go command2.OnlyExec(command)
+	c.JSON(common_err.SUCCESS, model.Result{Success: common_err.SUCCESS, Message: common_err.GetMsg(common_err.SUCCESS)})
 }
 
 // @Summary create folder

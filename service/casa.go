@@ -16,7 +16,7 @@ type CasaService interface {
 type casaService struct{}
 
 func getLatestVersion() model.Version {
-	v := httper.OasisGet("https://nextzenapi.cstsoft.net" + "/v1/sys/version")
+	v := httper.OasisGet("https://api.nextzenos.com" + "/v1/sys/version")
 	data := gjson.Get(v, "data")
 	newVersion := model.Version{}
 	err := json.Unmarshal([]byte(data.String()), &newVersion)

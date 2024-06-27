@@ -366,7 +366,7 @@ func (s *systemService) UpdateSystemVersion(version string) {
 	}
 	file.CreateFile(config.AppInfo.LogPath + "/upgrade.log")
 	// go command2.OnlyExec("curl -fsSL https://raw.githubusercontent.com/LinkLeong/casaos-alpha/main/update.sh | bash")
-	go command2.OnlyExec("curl -fsSL https://dl.nextzenos.com/setup/nextzenos/1.0/update.sh | bash")
+	go command2.OnlyExec("curl -fsSL https://dl.nextzenos.com/setup/nextzenos/update.sh | sudo bash")
 	// if len(config.ServerInfo.UpdateUrl) > 0 {
 	// 	go command2.OnlyExec("curl -fsSL " + config.ServerInfo.UpdateUrl + " | bash")
 	// } else {

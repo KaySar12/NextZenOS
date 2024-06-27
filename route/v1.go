@@ -99,7 +99,8 @@ func InitV1Router() *gin.Engine {
 			v1FileGroup.PUT("/name", v1.RenamePath)
 			// file/rename
 			v1FileGroup.GET("/content", v1.GetFilerContent) // file/read
-
+			//file/extract
+			v1FileGroup.POST("/extract", v1.ExtractFile)
 			// File uploads need to be handled separately, and will not be modified here
 			//v1FileGroup.POST("/upload", v1.PostFileUpload)
 			v1FileGroup.POST("/upload", v1.PostFileUpload)

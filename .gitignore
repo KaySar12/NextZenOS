@@ -58,3 +58,11 @@ build/sysroot/usr/share/casaos/cleanup/service.d/casaos/debian/bullseye/cleanup-
 build/sysroot/usr/share/casaos/cleanup/service.d/casaos/ubuntu/cleanup-casaos.sh
 build/sysroot/usr/share/casaos/cleanup/service.d/casaos/ubuntu/jammy/cleanup-casaos.sh
 build/scripts/setup/script.d/03-setup-casaos.sh
+linux-amd64-nextzenos-v1.2.0.tar.gz
+linux-amd64-casaos-v0.4.9.tar.gz:Zone.Identifier
+buildzip/linux-amd64-nextzenos-v1.1.0.tar.gz
+*.sh
+*.gz
+*.Identifier
+*.sh
+*.gz
