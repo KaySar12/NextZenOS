@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"math/rand/v2"
 	"net/http"
 	"net/url"
 	url2 "net/url"
@@ -438,6 +439,42 @@ func ExtractFile(c *gin.Context) {
 		command = fmt.Sprintf("unzip %s -d $(dirname %s)", json.Path, json.Path)
 	}
 	go command2.OnlyExec(command)
+	c.JSON(common_err.SUCCESS, model.Result{Success: common_err.SUCCESS, Message: common_err.GetMsg(common_err.SUCCESS)})
+}
+
+// @Summary Compress files
+// @Produce  application/json
+// @Accept  application/json
+// @Tags file
+// @Success 200 {string} string "ok"
+// @Router /file/compress [post]
+func CompressFile(c *gin.Context) {
+	jsonData := make(map[string]string)
+	c.ShouldBind(&jsonData)
+	paths := jsonData["paths"]
+	if len(paths) == 0 {
+		c.JSON(common_err.CLIENT_ERROR, model.Result{Success: common_err.INVALID_PARAMS, Message: common_err.GetMsg(common_err.INVALID_PARAMS)})
+		return
+	}
+	var jsonMap []string
+	err := json.Unmarshal([]byte(paths), &jsonMap)
+	if err != nil {
+		c.JSON(common_err.SERVICE_ERROR, model.Result{Success: common_err.SERVICE_ERROR, Message: common_err.GetMsg(common_err.SERVICE_ERROR), Data: err.Error()})
+		return
+	}
+	var v string
+	dest := ""
+	for _, item := range jsonMap {
+		str := command2.ExecResultStr(fmt.Sprintf("basename %s", item))
+		v += strings.TrimSuffix(str, "\n") + " "
+		if dest == "" {
+			dest = item
+		}
+	}
+	random := rand.IntN(1000)
+	command := fmt.Sprintf("tar -cvzf $(dirname %s)/file%s.tar.gz -C  $(dirname %s) %s", dest, strconv.Itoa(random), dest, v)
+	go command2.OnlyExec(command)
+	// Now jsonMap contains the list of paths, and you can proceed with your logic
 	c.JSON(common_err.SUCCESS, model.Result{Success: common_err.SUCCESS, Message: common_err.GetMsg(common_err.SUCCESS)})
 }
 
