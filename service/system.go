@@ -359,7 +359,7 @@ func (c *systemService) GetNet(physics bool) []string {
 }
 
 func (s *systemService) UpdateSystemVersion(version string) {
-	keyName := "casa_version"
+	keyName := "nextzen_version"
 	Cache.Delete(keyName)
 	if file.Exists(config.AppInfo.LogPath + "/upgrade.log") {
 		os.Remove(config.AppInfo.LogPath + "/upgrade.log")

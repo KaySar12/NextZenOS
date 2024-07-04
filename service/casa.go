@@ -2,58 +2,74 @@ package service
 
 import (
 	json "encoding/json"
+	"fmt"
+	"io"
+	"net/http"
 	"time"
 
 	"github.com/IceWhaleTech/CasaOS/model"
-	"github.com/IceWhaleTech/CasaOS/pkg/utils/httper"
 	"github.com/tidwall/gjson"
 )
 
 type CasaService interface {
-	GetCasaosVersion() model.Version
+	GetCasaosVersion() (model.Version, error)
 }
 
 type casaService struct{}
 
-func getLatestVersion() model.Version {
-	v := httper.OasisGet("https://api.nextzenos.com" + "/v1/sys/version")
-	data := gjson.Get(v, "data")
-	newVersion := model.Version{}
-	err := json.Unmarshal([]byte(data.String()), &newVersion)
+func getLatestVersion() (model.Version, error) {
+	resp, err := http.Get("https://api.nextzenos.com/v1/sys/version")
 	if err != nil {
-		panic(err) // Handle error appropriately
+		return model.Version{}, fmt.Errorf("failed to fetch latest version: %w", err)
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return model.Version{}, fmt.Errorf("failed to read response body: %w", err)
 	}
 
-	return model.Version{
-		Id:        1,
-		ChangeLog: newVersion.ChangeLog,
-		Version:   newVersion.Version,
-		CreatedAt: newVersion.CreatedAt,
-		UpdatedAt: newVersion.UpdatedAt,
+	data := gjson.Get(string(body), "data")
+	newVersion := model.Version{}
+
+	err = json.Unmarshal([]byte(data.String()), &newVersion)
+	if err != nil {
+		return model.Version{}, fmt.Errorf("failed to unmarshal JSON: %w", err)
 	}
+
+	return newVersion, nil
 }
-func (o *casaService) GetCasaosVersion() model.Version {
+
+func (o *casaService) GetCasaosVersion() (model.Version, error) {
 	keyName := "casa_version"
-	// var dataStr string
 	var version model.Version
 
 	// Check cache and return version if present
 	if result, ok := Cache.Get(keyName); ok {
 		dataStr, ok := result.(string)
-		if ok {
-			data := gjson.Parse(dataStr) // Parse as gjson.Result directly
-			json.Unmarshal([]byte(data.Get("data").String()), &version)
-			return version
+		if !ok {
+			return model.Version{}, fmt.Errorf("cache value is not a string")
 		}
+		data := gjson.Parse(dataStr)
+		err := json.Unmarshal([]byte(data.Get("data").String()), &version)
+		if err != nil {
+			return model.Version{}, fmt.Errorf("failed to unmarshal cached data: %w", err)
+		}
+		return version, nil
 	}
-	// Directly unmarshal into a new struct instance to avoid pass-by-value issues
-	newVersion := getLatestVersion()
-	// Cache the modified version
+
+	// Fetch latest version if not in cache
+	newVersion, err := getLatestVersion()
+	if err != nil {
+		return model.Version{}, fmt.Errorf("failed to fetch latest version: %w", err)
+	}
+
+	// Cache the fetched version
 	if len(newVersion.Version) > 0 {
 		Cache.Set(keyName, newVersion, time.Minute*20)
 	}
 
-	return newVersion
+	return newVersion, nil
 }
 
 func NewCasaService() CasaService {

@@ -36,7 +36,14 @@ import (
 // @Success 200 {string} string "ok"
 // @Router /sys/version/check [get]
 func GetSystemCheckVersion(c *gin.Context) {
-	need, version := version.IsNeedUpdate(service.MyService.Casa().GetCasaosVersion())
+	versionObj, err := service.MyService.Casa().GetCasaosVersion()
+	if err != nil {
+		// Handle the error appropriately, e.g., log the error and return a response indicating failure
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve CasaOS version"})
+		return
+	}
+
+	need, version := version.IsNeedUpdate(versionObj)
 	if need {
 		installLog := model2.AppNotify{}
 		installLog.State = 0
@@ -62,7 +69,14 @@ func GetSystemCheckVersion(c *gin.Context) {
 // @Success 200 {string} string "ok"
 // @Router /sys/update [post]
 func SystemUpdate(c *gin.Context) {
-	need, version := version.IsNeedUpdate(service.MyService.Casa().GetCasaosVersion())
+	versionObj, err := service.MyService.Casa().GetCasaosVersion()
+	if err != nil {
+		// Handle the error appropriately, e.g., log the error and return a response indicating failure
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve CasaOS version"})
+		return
+	}
+
+	need, version := version.IsNeedUpdate(versionObj)
 	if need {
 		service.MyService.System().UpdateSystemVersion(version.Version)
 	}
@@ -98,7 +112,12 @@ func GetSystemConfigDebug(c *gin.Context) {
 	array := service.MyService.System().GetSystemConfigDebug()
 	disk := service.MyService.System().GetDiskInfo()
 	sys := service.MyService.System().GetSysInfo()
-	version := service.MyService.Casa().GetCasaosVersion()
+	version, err := service.MyService.Casa().GetCasaosVersion()
+	if err != nil {
+		// Handle the error appropriately, e.g., log the error and return a response indicating failure
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve CasaOS version"})
+		return
+	}
 	var bugContent string = fmt.Sprintf(`
 	 - OS: %s
 	 - CasaOS Version: %s
