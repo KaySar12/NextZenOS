@@ -39,7 +39,7 @@ func GetSystemCheckVersion(c *gin.Context) {
 	versionObj, err := service.MyService.Casa().GetCasaosVersion()
 	if err != nil {
 		// Handle the error appropriately, e.g., log the error and return a response indicating failure
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve CasaOS version"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve version"})
 		return
 	}
 

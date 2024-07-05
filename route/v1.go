@@ -33,7 +33,7 @@ func InitV1Router() *gin.Engine {
 	}
 
 	r.GET("/v1/sys/debug", v1.GetSystemConfigDebug) // //debug
-	r.GET("/v1/sys/version/check", v1.GetSystemCheckVersion)
+	// r.GET("/v1/sys/version", v1.GetSystemCheckVersion)
 	r.GET("/v1/sys/version/current", func(ctx *gin.Context) {
 		ctx.String(200, common.VERSION)
 	})
@@ -50,7 +50,6 @@ func InitV1Router() *gin.Engine {
 		v1SysGroup.Use()
 		{
 			v1SysGroup.GET("/version", v1.GetSystemCheckVersion) // version/check
-
 			v1SysGroup.POST("/update", v1.SystemUpdate)
 
 			v1SysGroup.GET("/hardware", v1.GetSystemHardwareInfo) // hardware/info

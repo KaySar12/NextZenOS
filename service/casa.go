@@ -47,17 +47,12 @@ func (o *casaService) GetCasaosVersion() (model.Version, error) {
 	// Check cache and return version if present
 	if result, ok := Cache.Get(keyName); ok {
 		dataStr, ok := result.(string)
-		if !ok {
-			return model.Version{}, fmt.Errorf("cache value is not a string")
+		if ok {
+			data := gjson.Parse(dataStr) // Parse as gjson.Result directly
+			json.Unmarshal([]byte(data.Get("data").String()), &version)
+			return version, nil
 		}
-		data := gjson.Parse(dataStr)
-		err := json.Unmarshal([]byte(data.Get("data").String()), &version)
-		if err != nil {
-			return model.Version{}, fmt.Errorf("failed to unmarshal cached data: %w", err)
-		}
-		return version, nil
 	}
-
 	// Fetch latest version if not in cache
 	newVersion, err := getLatestVersion()
 	if err != nil {
