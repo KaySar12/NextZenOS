@@ -1,12 +1,14 @@
 package v1
 
 import (
+	"archive/tar"
+	"archive/zip"
+	"compress/gzip"
 	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
-	"math/rand/v2"
 	"net/http"
 	"net/url"
 	url2 "net/url"
@@ -20,20 +22,18 @@ import (
 
 	"github.com/IceWhaleTech/CasaOS-Common/utils/logger"
 	"github.com/IceWhaleTech/CasaOS/model"
-	command2 "github.com/IceWhaleTech/CasaOS/pkg/utils/command"
 	"github.com/IceWhaleTech/CasaOS/pkg/utils/common_err"
 	"github.com/IceWhaleTech/CasaOS/pkg/utils/file"
 	"github.com/IceWhaleTech/CasaOS/service"
 	model2 "github.com/IceWhaleTech/CasaOS/service/model"
-	"github.com/gorilla/websocket"
-	"github.com/robfig/cron/v3"
-	"github.com/tidwall/gjson"
-
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"go.uber.org/zap"
-
+	"github.com/gorilla/websocket"
 	"github.com/h2non/filetype"
+	"github.com/nwaples/rardecode"
+	"github.com/robfig/cron/v3"
+	"github.com/tidwall/gjson"
+	"go.uber.org/zap"
 )
 
 type ListReq struct {
@@ -419,27 +419,49 @@ func RenamePath(c *gin.Context) {
 // @Success 200 {string} string "ok"
 // @Router /file/extract [post]
 func ExtractFile(c *gin.Context) {
-	var json struct {
+	var requestData struct {
 		Path      string `json:"path"`
 		Extension string `json:"ext"`
 	}
-	if err := c.ShouldBindJSON(&json); err != nil {
+
+	if err := c.ShouldBindJSON(&requestData); err != nil {
 		c.JSON(common_err.CLIENT_ERROR, model.Result{Success: common_err.INVALID_PARAMS, Message: common_err.GetMsg(common_err.INVALID_PARAMS)})
 		return
 	}
-	if len(json.Path) == 0 {
-		c.JSON(common_err.CLIENT_ERROR, model.Result{Success: common_err.INVALID_PARAMS, Message: common_err.GetMsg(common_err.INVALID_PARAMS)})
+
+	// Open the file
+	file, err := os.Open(requestData.Path)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to open file"})
 		return
 	}
-	var command string
-	switch json.Extension {
+	defer file.Close()
+
+	// Determine the extraction method based on file extension
+	var extractFunc func(string) error
+	switch requestData.Extension {
 	case "gz":
-		command = fmt.Sprintf("tar -xvf %s -C $(dirname %s)", json.Path, json.Path)
+		extractFunc = extractGzip
+	// case "tar":
+	// 	extractFunc = extractTar
 	case "zip":
-		command = fmt.Sprintf("unzip %s -d $(dirname %s)", json.Path, json.Path)
+		extractFunc = extractZip
+	case "rar":
+		extractFunc = extractRar
+		//c.JSON(http.StatusBadRequest, gin.H{"error": "Unsupported file type"})
+	default:
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Unsupported file type"})
+		return
 	}
-	go command2.OnlyExec(command)
+
+	// Extract the file
+	if err := extractFunc(requestData.Path); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
 	c.JSON(common_err.SUCCESS, model.Result{Success: common_err.SUCCESS, Message: common_err.GetMsg(common_err.SUCCESS)})
+
 }
 
 // @Summary Compress files
@@ -462,20 +484,322 @@ func CompressFile(c *gin.Context) {
 		c.JSON(common_err.SERVICE_ERROR, model.Result{Success: common_err.SERVICE_ERROR, Message: common_err.GetMsg(common_err.SERVICE_ERROR), Data: err.Error()})
 		return
 	}
-	var v string
-	dest := ""
-	for _, item := range jsonMap {
-		str := command2.ExecResultStr(fmt.Sprintf("basename %s", item))
-		v += strings.TrimSuffix(str, "\n") + " "
-		if dest == "" {
-			dest = item
+	archive := generateUniqueFilename(jsonMap[0]) + ".zip"
+
+	zipFile, err := os.Create(archive)
+	if err != nil {
+		c.JSON(common_err.SERVICE_ERROR, model.Result{Success: common_err.SERVICE_ERROR, Message: common_err.GetMsg(common_err.SERVICE_ERROR), Data: err.Error()})
+		return
+	}
+	defer zipFile.Close()
+	// Create a new zip archive writer
+	zipWriter := zip.NewWriter(zipFile)
+	defer zipWriter.Close()
+	for _, file := range jsonMap {
+		// Open the file to be added to the zip archive
+		f, err := os.Open(file)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to open file"})
+			return
+		}
+		defer f.Close()
+
+		// Get the file info
+		info, err := f.Stat()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get file info"})
+			return
+		}
+
+		// Create a header for the file
+		header, err := zip.FileInfoHeader(info)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get file info header"})
+			return
+		}
+		header.Name = filepath.Base(file) // Use only the file name, not the full path
+
+		// Create a writer for the file in the zip archive
+		writer, err := zipWriter.CreateHeader(header)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create file header"})
+			return
+		}
+
+		// Copy the file content to the zip archive
+		if _, err := io.Copy(writer, f); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to copy file"})
+			return
 		}
 	}
-	random := rand.IntN(1000)
-	command := fmt.Sprintf("tar -cvzf $(dirname %s)/file%s.tar.gz -C  $(dirname %s) %s", dest, strconv.Itoa(random), dest, v)
-	go command2.OnlyExec(command)
-	// Now jsonMap contains the list of paths, and you can proceed with your logic
 	c.JSON(common_err.SUCCESS, model.Result{Success: common_err.SUCCESS, Message: common_err.GetMsg(common_err.SUCCESS)})
+}
+func extractTar(filePath string) error {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	var fileReader io.Reader = file
+
+	// Detect if it's a gzipped tar file
+	if filepath.Ext(filePath) == ".gz" {
+		gzReader, err := gzip.NewReader(file)
+		if err != nil {
+			return err
+		}
+		defer gzReader.Close()
+		fileReader = gzReader
+	}
+
+	tarReader := tar.NewReader(fileReader)
+
+	for {
+		header, err := tarReader.Next()
+		if err == io.EOF {
+			break // End of archive
+		}
+		if err != nil {
+			return err
+		}
+
+		targetPath := filepath.Join(".", header.Name)
+
+		switch header.Typeflag {
+		case tar.TypeDir:
+			if err := os.MkdirAll(targetPath, 0755); err != nil {
+				return err
+			}
+		case tar.TypeReg:
+			outFile, err := os.OpenFile(targetPath, os.O_CREATE|os.O_RDWR, os.FileMode(header.Mode))
+			if err != nil {
+				return err
+			}
+			if _, err := io.Copy(outFile, tarReader); err != nil {
+				outFile.Close()
+				return err
+			}
+			outFile.Close()
+		}
+	}
+
+	return nil
+}
+
+// extractGzip extracts a .tar.gz or .tar file
+func extractGzip(filePath string) error {
+	// Open the gzip file
+	gzipFile, err := os.Open(filePath)
+	if err != nil {
+		return fmt.Errorf("failed to open gzip file: %w", err)
+	}
+	defer gzipFile.Close()
+
+	var reader io.Reader = gzipFile
+
+	// If the file is a .tar.gz file, create a gzip reader
+	if strings.HasSuffix(filePath, ".tar.gz") {
+		gzipReader, err := gzip.NewReader(gzipFile)
+		if err != nil {
+			return fmt.Errorf("failed to create gzip reader: %w", err)
+		}
+		defer gzipReader.Close()
+		reader = gzipReader
+	}
+
+	// Create a tar reader
+	tarReader := tar.NewReader(reader)
+
+	// Extract the tar file
+	outputDir := strings.TrimSuffix(filePath, ".tar.gz")
+	if strings.HasSuffix(filePath, ".tar") {
+		outputDir = strings.TrimSuffix(filePath, ".tar")
+	}
+
+	// Handle existing output directory
+	if _, err := os.Stat(outputDir); err == nil {
+		// If the output directory already exists, choose your behavior:
+		// - Overwrite: os.RemoveAll(outputDir) // Uncomment to overwrite
+		// - Rename:  outputDir = generateUniqueFilename(outputDir)
+		// - Error:  return fmt.Errorf("output directory already exists: %s", outputDir)
+		outputDir = generateUniqueFilename(outputDir)
+	}
+
+	// Create the output directory
+	if err := os.MkdirAll(outputDir, 0755); err != nil {
+		return fmt.Errorf("failed to create output directory: %w", err)
+	}
+
+	// Extract files from the tar archive
+	for {
+		header, err := tarReader.Next()
+		if err == io.EOF {
+			break // End of tar archive
+		}
+		if err != nil {
+			return fmt.Errorf("failed to read tar header: %w", err)
+		}
+
+		outputPath := filepath.Join(outputDir, header.Name)
+
+		switch header.Typeflag {
+		case tar.TypeDir:
+			// Create directory
+			if err := os.MkdirAll(outputPath, 0755); err != nil {
+				return fmt.Errorf("failed to create directory: %w", err)
+			}
+		case tar.TypeReg:
+			// Create file
+			file, err := os.Create(outputPath)
+			if err != nil {
+				return fmt.Errorf("failed to create file: %w", err)
+			}
+			defer file.Close()
+
+			if _, err := io.Copy(file, tarReader); err != nil {
+				return fmt.Errorf("failed to copy file content: %w", err)
+			}
+		default:
+			return fmt.Errorf("unknown tar header type: %d", header.Typeflag)
+		}
+	}
+
+	return nil // Extraction successful
+}
+
+// generateUniqueFilename generates a unique filename if the original one already exists
+func generateUniqueFilename(filePath string) string {
+	ext := filepath.Ext(filePath)
+	base := strings.TrimSuffix(filePath, ext)
+	for i := 1; ; i++ {
+		newPath := fmt.Sprintf("%s_%d%s", base, i, ext)
+		if _, err := os.Stat(newPath); os.IsNotExist(err) {
+			return newPath
+		}
+	}
+}
+func extractZip(filePath string) error {
+	// 1. Open the Zip File
+	zipReader, err := zip.OpenReader(filePath)
+	if err != nil {
+		return fmt.Errorf("failed to open zip file: %w", err)
+	}
+	defer zipReader.Close()
+
+	// 2. Get Destination Directory
+	destinationDir := filepath.Dir(filePath)
+
+	// 3. Iterate through Files in the Archive
+	for _, file := range zipReader.File {
+		// 4. Construct Full File Path
+		filePath := filepath.Join(destinationDir, file.Name)
+
+		// 5. Check for ZipSlip (Directory Traversal Vulnerability)
+		if !strings.HasPrefix(filePath, filepath.Clean(destinationDir)+string(os.PathSeparator)) {
+			return fmt.Errorf("invalid file path: %s", filePath)
+		}
+
+		// 6. Create Directories if Necessary
+		if file.FileInfo().IsDir() {
+			err := os.MkdirAll(filePath, file.Mode())
+			if err != nil {
+				return fmt.Errorf("failed to create directory: %w", err)
+			}
+			continue // Skip to next file
+		}
+
+		// 7. Open the File in the Archive
+		fileInArchive, err := file.Open()
+		if err != nil {
+			return fmt.Errorf("failed to open file in archive: %w", err)
+		}
+		defer fileInArchive.Close()
+
+		// 8. Create the Destination File
+		destinationFile, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, file.Mode())
+		if err != nil {
+			return fmt.Errorf("failed to create destination file: %w", err)
+		}
+		defer destinationFile.Close()
+
+		// 9. Copy the Content
+		_, err = io.Copy(destinationFile, fileInArchive)
+		if err != nil {
+			return fmt.Errorf("failed to copy file content: %w", err)
+		}
+	}
+	return nil // Extraction successful
+}
+
+// extractRar extracts a .rar file into a specified directory
+func extractRar(filePath string) error {
+	// Open the RAR file
+	rarFile, err := os.Open(filePath)
+	if err != nil {
+		return fmt.Errorf("failed to open rar file: %w", err)
+	}
+	defer rarFile.Close()
+
+	// Create a RAR reader
+	rarReader, err := rardecode.NewReader(rarFile, "")
+	if err != nil {
+		return fmt.Errorf("failed to create rar reader: %w", err)
+	}
+
+	// Determine output directory (remove ".rar" extension)
+	outputDir := strings.TrimSuffix(filePath, ".rar")
+
+	// Handle existing output directory
+	if _, err := os.Stat(outputDir); err == nil {
+		// If the output directory already exists, choose your behavior:
+		// - Overwrite: os.RemoveAll(outputDir) // Uncomment to overwrite
+		// - Rename:  outputDir = generateUniqueDirectory(outputDir)
+		// - Error:  return fmt.Errorf("output directory already exists: %s", outputDir)
+		outputDir = generateUniqueFilename(outputDir)
+	}
+
+	// Create the output directory
+	if err := os.MkdirAll(outputDir, 0755); err != nil {
+		return fmt.Errorf("failed to create output directory: %w", err)
+	}
+
+	// Extract files from the RAR archive
+	for {
+		header, err := rarReader.Next()
+		if err == io.EOF {
+			break // End of RAR archive
+		}
+		if err != nil {
+			return fmt.Errorf("failed to read rar header: %w", err)
+		}
+
+		outputPath := filepath.Join(outputDir, header.Name)
+
+		switch header.Mode().IsDir() {
+		case true:
+			// Create directory
+			if err := os.MkdirAll(outputPath, 0755); err != nil {
+				return fmt.Errorf("failed to create directory: %w", err)
+			}
+		case false:
+			// Create file
+			if err := os.MkdirAll(filepath.Dir(outputPath), 0755); err != nil {
+				return fmt.Errorf("failed to create file directory: %w", err)
+			}
+			file, err := os.Create(outputPath)
+			if err != nil {
+				return fmt.Errorf("failed to create file: %w", err)
+			}
+			defer file.Close()
+
+			if _, err := io.Copy(file, rarReader); err != nil {
+				return fmt.Errorf("failed to copy file content: %w", err)
+			}
+		}
+	}
+
+	return nil // Extraction successful
 }
 
 // @Summary create folder
