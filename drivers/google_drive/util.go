@@ -17,8 +17,8 @@ import (
 )
 
 var (
-	client_id     = "176137744326-qrfhqueo0dro0tmoh7f96o2vphtmlor8.apps.googleusercontent.com"
-	client_secret = "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"
+	client_id     = ""
+	client_secret = ""
 )
 
 // https://api.nextzenos.com/cloud
