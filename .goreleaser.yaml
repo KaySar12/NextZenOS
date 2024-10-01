@@ -9,7 +9,7 @@ before:
     - go test -race -v ./...
 
 builds:
-  - id: casaos-amd64
+  - id: nextzenos-amd64
     binary: build/sysroot/usr/bin/casaos
     hooks:
       post:
@@ -36,7 +36,7 @@ builds:
       - linux
     goarch:
       - amd64
-  - id: casaos-arm64
+  - id: nextzenos-arm64
     binary: build/sysroot/usr/bin/casaos
     # hooks:
     #   post:
@@ -63,7 +63,7 @@ builds:
       - linux
     goarch:
       - arm64
-  - id: casaos-arm-7
+  - id: nextzenos-arm-7
     binary: build/sysroot/usr/bin/casaos
     hooks:
       post:

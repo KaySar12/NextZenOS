@@ -9,7 +9,7 @@ before:
     - go test -race -v ./...
 
 builds:
-  - id: casaos-amd64
+  - id: nextzenos-amd64
     binary: build/sysroot/usr/bin/casaos
     env:
       - CC=x86_64-linux-gnu-gcc
@@ -25,7 +25,7 @@ builds:
       - linux
     goarch:
       - amd64
-  - id: casaos-arm64
+  - id: nextzenos-arm64
     binary: build/sysroot/usr/bin/casaos
     env:
       - CC=aarch64-linux-gnu-gcc
@@ -41,7 +41,7 @@ builds:
       - linux
     goarch:
       - arm64
-  - id: casaos-arm-7
+  - id: nextzenos-arm-7
     binary: build/sysroot/usr/bin/casaos
     env:
       - CC=arm-linux-gnueabihf-gcc
@@ -117,9 +117,9 @@ archives:
       {{ .Os }}-{{- if eq .Arch "arm" }}arm-7{{- else }}{{ .Arch }}{{- end }}-{{ .ProjectName }}-v{{ .Version }}
     id: casaos
     builds:
-      - casaos-amd64
-      - casaos-arm64
-      - casaos-arm-7
+      - nextzenos-amd64
+      - nextzenos-arm64
+      - nextzenos-arm-7
     files:
       - build/**/*
   # - name_template: >-
