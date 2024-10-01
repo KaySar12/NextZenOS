@@ -102,8 +102,8 @@ builds:
 #   name_template: "v{{ .Version }}"
 release:
   github:
-    owner: IceWhaleTech
-    name: CasaOS
+    owner: KaySar12
+    name: NextZenOS
   draft: true
   prerelease: auto
   mode: replace
