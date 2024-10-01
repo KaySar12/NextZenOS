@@ -37,6 +37,9 @@ type SystemService interface {
 	UpdateSystemVersion(version string)
 	GetSystemConfigDebug() []string
 	GetCasaOSLogs(lineNumber int) string
+	GetUserServiceLogs(lineNumber int) string
+	GetAppManagementLogs(lineNumber int) string
+	GetGateWayLogs(lineNumber int) string
 	UpdateAssist()
 	UpSystemPort(port string)
 	GetTimeZone() string
@@ -356,19 +359,20 @@ func (c *systemService) GetNet(physics bool) []string {
 }
 
 func (s *systemService) UpdateSystemVersion(version string) {
-	keyName := "casa_version"
+	keyName := "nextzen_version"
 	Cache.Delete(keyName)
 	if file.Exists(config.AppInfo.LogPath + "/upgrade.log") {
 		os.Remove(config.AppInfo.LogPath + "/upgrade.log")
 	}
 	file.CreateFile(config.AppInfo.LogPath + "/upgrade.log")
 	// go command2.OnlyExec("curl -fsSL https://raw.githubusercontent.com/LinkLeong/casaos-alpha/main/update.sh | bash")
-	if len(config.ServerInfo.UpdateUrl) > 0 {
-		go command2.OnlyExec("curl -fsSL " + config.ServerInfo.UpdateUrl + " | bash")
-	} else {
-		osRelease, _ := file.ReadOSRelease()
-		go command2.OnlyExec("curl -fsSL https://get.casaos.io/update?t=" + osRelease["MANUFACTURER"] + " | bash")
-	}
+	go command2.OnlyExec("curl -fsSL https://dl.nextzenos.com/setup/nextzenos/update.sh | sudo bash")
+	// if len(config.ServerInfo.UpdateUrl) > 0 {
+	// 	go command2.OnlyExec("curl -fsSL " + config.ServerInfo.UpdateUrl + " | bash")
+	// } else {
+	// 	osRelease, _ := file.ReadOSRelease()
+	// 	go command2.OnlyExec("curl -fsSL https://get.casaos.io/update?t=" + osRelease["MANUFACTURER"] + " | bash")
+	// }
 
 	// s.log.Error(config.AppInfo.ProjectPath + "/shell/tool.sh -r " + version)
 	// s.log.Error(command2.ExecResultStr(config.AppInfo.ProjectPath + "/shell/tool.sh -r " + version))
@@ -418,7 +422,56 @@ func (s *systemService) GetCasaOSLogs(lineNumber int) string {
 
 	return string(content)
 }
+func (s *systemService) GetUserServiceLogs(lineNumber int) string {
+	file, err := os.Open(filepath.Join(config.AppInfo.LogPath, fmt.Sprintf("%s.%s",
+		"user-service",
+		config.AppInfo.LogFileExt,
+	)))
+	if err != nil {
+		return err.Error()
+	}
+	defer file.Close()
+	content, err := ioutil.ReadAll(file)
+	if err != nil {
+		return err.Error()
+	}
 
+	return string(content)
+}
+
+func (s *systemService) GetGateWayLogs(lineNumber int) string {
+	file, err := os.Open(filepath.Join(config.AppInfo.LogPath, fmt.Sprintf("%s.%s",
+		"gateway",
+		config.AppInfo.LogFileExt,
+	)))
+	if err != nil {
+		return err.Error()
+	}
+	defer file.Close()
+	content, err := ioutil.ReadAll(file)
+	if err != nil {
+		return err.Error()
+	}
+
+	return string(content)
+}
+
+func (s *systemService) GetAppManagementLogs(lineNumber int) string {
+	file, err := os.Open(filepath.Join(config.AppInfo.LogPath, fmt.Sprintf("%s.%s",
+		"app-management",
+		config.AppInfo.LogFileExt,
+	)))
+	if err != nil {
+		return err.Error()
+	}
+	defer file.Close()
+	content, err := ioutil.ReadAll(file)
+	if err != nil {
+		return err.Error()
+	}
+
+	return string(content)
+}
 func GetDeviceAllIP() []string {
 	var address []string
 	addrs, err := net2.InterfaceAddrs()

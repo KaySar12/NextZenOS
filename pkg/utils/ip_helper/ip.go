@@ -57,6 +57,7 @@ func GetDeviceAllIP(port string) []string {
 	}
 	return address
 }
+
 func GetDeviceAllIPv4() map[string]string {
 	address := make(map[string]string)
 	addrs, err := net.Interfaces()

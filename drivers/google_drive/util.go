@@ -17,12 +17,13 @@ import (
 )
 
 var (
-	client_id     = "private build"
-	client_secret = "private build"
+	client_id     = ""
+	client_secret = ""
 )
 
+// https://api.nextzenos.com/cloud
 // do others that not defined in Driver interface
-
+// v1/recover/GoogleDrive
 func (d *GoogleDrive) getRefreshToken() error {
 	url := "https://www.googleapis.com/oauth2/v4/token"
 	var resp base.TokenResp
@@ -33,7 +34,7 @@ func (d *GoogleDrive) getRefreshToken() error {
 			"client_secret": d.ClientSecret,
 			"code":          d.Code,
 			"grant_type":    "authorization_code",
-			"redirect_uri":  "https://cloudoauth.files.casaos.app",
+			"redirect_uri":  "https://api.nextzenos.com/cloud",
 		}).Post(url)
 	if err != nil {
 		return err
@@ -160,7 +161,7 @@ func GetConfig() GoogleDrive {
 	config.ClientID = client_id
 	config.ClientSecret = client_secret
 	config.RootFolderID = "root"
-	config.AuthUrl = "https://accounts.google.com/o/oauth2/auth/oauthchooseaccount?response_type=code&client_id=" + client_id + "&redirect_uri=https%3A%2F%2Fcloudoauth.files.casaos.app&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive&access_type=offline&approval_prompt=force&state=${HOST}%2Fv1%2Frecover%2FGoogleDrive&service=lso&o2v=1&flowName=GeneralOAuthFlow"
+	config.AuthUrl = "https://accounts.google.com/o/oauth2/auth/oauthchooseaccount?response_type=code&client_id=" + client_id + "&redirect_uri=https%3A%2F%2Fapi.nextzenos.com/cloud&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive&access_type=offline&approval_prompt=force&state=${HOST}%2Fv1%2Frecover%2FGoogleDrive&service=lso&o2v=1&flowName=GeneralOAuthFlow"
 	config.Icon = "./img/driver/GoogleDrive.svg"
 
 	return config

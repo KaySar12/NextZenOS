@@ -12,8 +12,8 @@ import (
 )
 
 var (
-	client_id     = "private build"
-	client_secret = "private build"
+	client_id     = ""
+	client_secret = ""
 )
 var onedriveHostMap = map[string]Host{
 	"global": {
@@ -173,10 +173,10 @@ func GetConfig() Onedrive {
 	config.ClientID = client_id
 	config.ClientSecret = client_secret
 	config.RootFolderID = "/"
-	config.AuthUrl = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=" + client_id + "&response_type=code&redirect_uri=https%3A%2F%2Fcloudoauth.files.casaos.app&scope=offline_access+files.readwrite.all&state=${HOST}%2Fv1%2Frecover%2FOnedrive"
+	config.AuthUrl = "https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=" + client_id + "&response_type=code&redirect_uri=https%3A%2F%2Fapi.nextzenos.com/cloud&scope=offline_access+files.readwrite.all&state=${HOST}%2Fv1%2Frecover%2FOnedrive"
 	config.Icon = "./img/driver/OneDrive.svg"
 	config.Region = "global"
-	config.RedirectUri = "https://cloudoauth.files.casaos.app"
+	config.RedirectUri = "https://api.nextzenos.com/cloud"
 
 	return config
 }

@@ -10,7 +10,6 @@ import (
 	"github.com/IceWhaleTech/CasaOS/common"
 	"github.com/IceWhaleTech/CasaOS/pkg/config"
 	v1 "github.com/IceWhaleTech/CasaOS/route/v1"
-
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 )
@@ -34,8 +33,7 @@ func InitV1Router() *gin.Engine {
 	}
 
 	r.GET("/v1/sys/debug", v1.GetSystemConfigDebug) // //debug
-
-	r.GET("/v1/sys/version/check", v1.GetSystemCheckVersion)
+	// r.GET("/v1/sys/version", v1.GetSystemCheckVersion)
 	r.GET("/v1/sys/version/current", func(ctx *gin.Context) {
 		ctx.String(200, common.VERSION)
 	})
@@ -52,7 +50,6 @@ func InitV1Router() *gin.Engine {
 		v1SysGroup.Use()
 		{
 			v1SysGroup.GET("/version", v1.GetSystemCheckVersion) // version/check
-
 			v1SysGroup.POST("/update", v1.SystemUpdate)
 
 			v1SysGroup.GET("/hardware", v1.GetSystemHardwareInfo) // hardware/info
@@ -61,7 +58,12 @@ func InitV1Router() *gin.Engine {
 			v1SysGroup.POST("/ssh-login", v1.PostSshLogin)
 			// v1SysGroup.GET("/config", v1.GetSystemConfig) //delete
 			// v1SysGroup.POST("/config", v1.PostSetSystemConfig)
-			v1SysGroup.GET("/logs", v1.GetCasaOSErrorLogs) // error/logs
+			v1SysGroup.GET("/logs", v1.GetCasaOSErrorLogs)                   // main/error/logs
+			v1SysGroup.GET("/user-service-logs", v1.GetUserServiceErrorLogs) // users/error/logs
+			v1SysGroup.GET("/gateway-logs", v1.GetGateWayErrorLogs)          // gateway/error/logs
+			v1SysGroup.GET("/app-management-logs", v1.GetAppManagementLogs)
+
+			//GetAppManagement
 			// v1SysGroup.GET("/widget/config", v1.GetWidgetConfig)//delete
 			// v1SysGroup.POST("/widget/config", v1.PostSetWidgetConfig)//delete
 
@@ -96,7 +98,9 @@ func InitV1Router() *gin.Engine {
 			v1FileGroup.PUT("/name", v1.RenamePath)
 			// file/rename
 			v1FileGroup.GET("/content", v1.GetFilerContent) // file/read
-
+			//file/extract
+			v1FileGroup.POST("/extract", v1.ExtractFile)
+			v1FileGroup.POST("/compress", v1.CompressFile)
 			// File uploads need to be handled separately, and will not be modified here
 			//v1FileGroup.POST("/upload", v1.PostFileUpload)
 			v1FileGroup.POST("/upload", v1.PostFileUpload)
