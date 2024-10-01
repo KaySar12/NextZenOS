@@ -6,10 +6,10 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/IceWhaleTech/CasaOS-Common/utils/logger"
+	"github.com/KaySar12/NextZen-Common/utils/logger"
 
-	"github.com/IceWhaleTech/CasaOS/internal/driver"
-	"github.com/IceWhaleTech/CasaOS/model"
+	"github.com/KaySar12/NextZenOS/internal/driver"
+	"github.com/KaySar12/NextZenOS/model"
 	"go.uber.org/zap"
 )
 

@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/IceWhaleTech/CasaOS/pkg/config"
+	"github.com/KaySar12/NextZenOS/pkg/config"
 	"github.com/tidwall/gjson"
 )
 

@@ -8,12 +8,12 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/IceWhaleTech/CasaOS-Common/utils/logger"
-	"github.com/IceWhaleTech/CasaOS/common"
-	model2 "github.com/IceWhaleTech/CasaOS/model"
-	"github.com/IceWhaleTech/CasaOS/model/notify"
-	"github.com/IceWhaleTech/CasaOS/service/model"
-	"github.com/IceWhaleTech/CasaOS/types"
+	"github.com/KaySar12/NextZen-Common/utils/logger"
+	"github.com/KaySar12/NextZenOS/common"
+	model2 "github.com/KaySar12/NextZenOS/model"
+	"github.com/KaySar12/NextZenOS/model/notify"
+	"github.com/KaySar12/NextZenOS/service/model"
+	"github.com/KaySar12/NextZenOS/types"
 	"go.uber.org/zap"
 	"golang.org/x/sync/syncmap"
 

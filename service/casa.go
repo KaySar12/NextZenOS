@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/IceWhaleTech/CasaOS/model"
+	"github.com/KaySar12/NextZenOS/model"
 	"github.com/tidwall/gjson"
 )
 

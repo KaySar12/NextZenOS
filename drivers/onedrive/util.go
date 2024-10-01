@@ -6,8 +6,8 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/IceWhaleTech/CasaOS-Common/utils/logger"
-	"github.com/IceWhaleTech/CasaOS/drivers/base"
+	"github.com/KaySar12/NextZen-Common/utils/logger"
+	"github.com/KaySar12/NextZenOS/drivers/base"
 	"go.uber.org/zap"
 )
 

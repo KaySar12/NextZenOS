@@ -16,9 +16,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/IceWhaleTech/CasaOS-Common/utils/constants"
-	"github.com/IceWhaleTech/CasaOS/common"
-	"github.com/IceWhaleTech/CasaOS/model"
+	"github.com/KaySar12/NextZen-Common/utils/constants"
+	"github.com/KaySar12/NextZenOS/common"
+	"github.com/KaySar12/NextZenOS/model"
 	"github.com/go-ini/ini"
 )
 
