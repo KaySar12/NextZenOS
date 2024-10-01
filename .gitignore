@@ -38,6 +38,6 @@ github.com
 dist
 CasaOS
 /codegen
-
+/buildzip
 # System Files
 .DS_Store

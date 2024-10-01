@@ -1,13 +1,26 @@
-.PHONY:build build-ui build-backend help
+GORELEASER=goreleaser
+GORELEASERBUILD=$(GORELEASER) build
+SERVICE = casaos
+ARCHITECHTURE= amd64
+OS=linux
+VERSION=v1
+BIN_PATH=build/sysroot/usr/bin
+BUILD_PATH=build
+CUR_DIR=$(PWD)
+TAG=v1.4.0
+ARCHIVE_PATH=buildzip
+PACKAGE_NAME=$(OS)-$(ARCHITECHTURE)-nextzenos-app-management-$(TAG)
 
-build: build-ui build-backend
+build_service:
+	$(GORELEASERBUILD) --clean --snapshot -f .goreleaser.debug.yaml --id $(SERVICE)-$(ARCHITECHTURE)
 
+package:
+	 cp -f $(CUR_DIR)/dist/$(SERVICE)-$(ARCHITECHTURE)_$(OS)_$(ARCHITECHTURE)_$(VERSION)/$(BIN_PATH)/$(SERVICE) $(CUR_DIR)/$(BIN_PATH) \
+	 && tar -czvf $(PACKAGE_NAME).tar.gz $(CUR_DIR)/$(BUILD_PATH)
 
-build-ui:
-	cd CasaOS-UI && yarn install && yarn build
-
-build-backend:
-	export CGO_ENABLED=1;export CGO_LDFLAGS=-static;go build -o ./casa main.go;upx --lzma --best casa
-
-help:
-	@echo "call john"
+archive_package:
+	mv $(PACKAGE_NAME).tar.gz $(CUR_DIR)/$(ARCHIVE_PATH)
+remove_package:
+	rm $(PACKAGE_NAME).tar.gz
+clear_archive:
+	rm -rf $(CUR_DIR)/$(ARCHIVE_PATH)/*

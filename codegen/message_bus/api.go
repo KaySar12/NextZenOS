@@ -21,6 +21,21 @@ const (
 	Access_tokenScopes = "access_token.Scopes"
 )
 
+// Defines values for YSKCardCardType.
+const (
+	YSKCardCardTypeLongNotice  YSKCardCardType = "long-notice"
+	YSKCardCardTypeShortNotice YSKCardCardType = "short-notice"
+	YSKCardCardTypeTask        YSKCardCardType = "task"
+)
+
+// Defines values for YSKCardRenderType.
+const (
+	YSKCardRenderTypeIconTextNotice YSKCardRenderType = "icon-text-notice"
+	YSKCardRenderTypeListNotice     YSKCardRenderType = "list-notice"
+	YSKCardRenderTypeMarkdownNotice YSKCardRenderType = "markdown-notice"
+	YSKCardRenderTypeTask           YSKCardRenderType = "task"
+)
+
 // Action defines model for Action.
 type Action struct {
 	// Name action name
@@ -99,6 +114,69 @@ type PropertyType struct {
 	Name string `json:"name"`
 }
 
+// YSKCard defines model for YSKCard.
+type YSKCard struct {
+	CardType   YSKCardCardType   `json:"cardType"`
+	Content    YSKCardContent    `json:"content"`
+	Id         string            `json:"id"`
+	RenderType YSKCardRenderType `json:"renderType"`
+}
+
+// YSKCardCardType defines model for YSKCard.CardType.
+type YSKCardCardType string
+
+// YSKCardRenderType defines model for YSKCard.RenderType.
+type YSKCardRenderType string
+
+// YSKCardContent defines model for YSKCardContent.
+type YSKCardContent struct {
+	BodyIconWithText *YSKCardIconWithText   `json:"bodyIconWithText,omitempty"`
+	BodyList         *[]YSKCardListItem     `json:"bodyList,omitempty"`
+	BodyProgress     *YSKCardProgress       `json:"bodyProgress,omitempty"`
+	FooterActions    *[]YSKCardFooterAction `json:"footerActions,omitempty"`
+	TitleIcon        YSKCardIcon            `json:"titleIcon"`
+	TitleText        string                 `json:"titleText"`
+}
+
+// YSKCardFooterAction defines model for YSKCardFooterAction.
+type YSKCardFooterAction struct {
+	MessageBus YSKCardMessageBusAction `json:"messageBus"`
+	Side       string                  `json:"side"`
+	Style      string                  `json:"style"`
+	Text       string                  `json:"text"`
+}
+
+// YSKCardIcon defines model for YSKCardIcon.
+type YSKCardIcon = string
+
+// YSKCardIconWithText defines model for YSKCardIconWithText.
+type YSKCardIconWithText struct {
+	Description string      `json:"description"`
+	Icon        YSKCardIcon `json:"icon"`
+}
+
+// YSKCardList defines model for YSKCardList.
+type YSKCardList = []YSKCard
+
+// YSKCardListItem defines model for YSKCardListItem.
+type YSKCardListItem struct {
+	Description string      `json:"description"`
+	Icon        YSKCardIcon `json:"icon"`
+	RightText   string      `json:"rightText"`
+}
+
+// YSKCardMessageBusAction defines model for YSKCardMessageBusAction.
+type YSKCardMessageBusAction struct {
+	Key     string `json:"key"`
+	Payload string `json:"payload"`
+}
+
+// YSKCardProgress defines model for YSKCardProgress.
+type YSKCardProgress struct {
+	Label    string `json:"label"`
+	Progress int    `json:"progress"`
+}
+
 // ActionName defines model for ActionName.
 type ActionName = string
 
@@ -134,6 +212,14 @@ type ResponseBadRequest = BaseResponse
 
 // ResponseConflict defines model for ResponseConflict.
 type ResponseConflict = BaseResponse
+
+// ResponseGetYSKCardListOK defines model for ResponseGetYSKCardListOK.
+type ResponseGetYSKCardListOK struct {
+	Data *YSKCardList `json:"data,omitempty"`
+
+	// Message message returned by server side if there is any
+	Message *string `json:"message,omitempty"`
+}
 
 // ResponseInternalServerError defines model for ResponseInternalServerError.
 type ResponseInternalServerError = BaseResponse
@@ -321,6 +407,12 @@ type ClientInterface interface {
 
 	// PollSIO2 request
 	PollSIO2(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetYskCard request
+	GetYskCard(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteYskCard request
+	DeleteYskCard(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 func (c *Client) SubscribeActionWS(ctx context.Context, sourceId SourceID, params *SubscribeActionWSParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -553,6 +645,30 @@ func (c *Client) SubscribeSIO2(ctx context.Context, reqEditors ...RequestEditorF
 
 func (c *Client) PollSIO2(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewPollSIO2Request(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetYskCard(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetYskCardRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteYskCard(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteYskCardRequest(c.Server, id)
 	if err != nil {
 		return nil, err
 	}
@@ -1171,6 +1287,67 @@ func NewPollSIO2Request(server string) (*http.Request, error) {
 	return req, nil
 }
 
+// NewGetYskCardRequest generates requests for GetYskCard
+func NewGetYskCardRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/ysk")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewDeleteYskCardRequest generates requests for DeleteYskCard
+func NewDeleteYskCardRequest(server string, id string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/ysk/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
@@ -1269,6 +1446,12 @@ type ClientWithResponsesInterface interface {
 
 	// PollSIO2 request
 	PollSIO2WithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*PollSIO2Response, error)
+
+	// GetYskCard request
+	GetYskCardWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetYskCardResponse, error)
+
+	// DeleteYskCard request
+	DeleteYskCardWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*DeleteYskCardResponse, error)
 }
 
 type SubscribeActionWSResponse struct {
@@ -1630,6 +1813,57 @@ func (r PollSIO2Response) StatusCode() int {
 	return 0
 }
 
+type GetYskCardResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		Data *YSKCardList `json:"data,omitempty"`
+
+		// Message message returned by server side if there is any
+		Message *string `json:"message,omitempty"`
+	}
+	JSON500 *BaseResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetYskCardResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetYskCardResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeleteYskCardResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *BaseResponse
+	JSON500      *BaseResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteYskCardResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteYskCardResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 // SubscribeActionWSWithResponse request returning *SubscribeActionWSResponse
 func (c *ClientWithResponses) SubscribeActionWSWithResponse(ctx context.Context, sourceId SourceID, params *SubscribeActionWSParams, reqEditors ...RequestEditorFn) (*SubscribeActionWSResponse, error) {
 	rsp, err := c.SubscribeActionWS(ctx, sourceId, params, reqEditors...)
@@ -1804,6 +2038,24 @@ func (c *ClientWithResponses) PollSIO2WithResponse(ctx context.Context, reqEdito
 		return nil, err
 	}
 	return ParsePollSIO2Response(rsp)
+}
+
+// GetYskCardWithResponse request returning *GetYskCardResponse
+func (c *ClientWithResponses) GetYskCardWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetYskCardResponse, error) {
+	rsp, err := c.GetYskCard(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetYskCardResponse(rsp)
+}
+
+// DeleteYskCardWithResponse request returning *DeleteYskCardResponse
+func (c *ClientWithResponses) DeleteYskCardWithResponse(ctx context.Context, id string, reqEditors ...RequestEditorFn) (*DeleteYskCardResponse, error) {
+	rsp, err := c.DeleteYskCard(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteYskCardResponse(rsp)
 }
 
 // ParseSubscribeActionWSResponse parses an HTTP response from a SubscribeActionWSWithResponse call
@@ -2248,6 +2500,77 @@ func ParsePollSIO2Response(rsp *http.Response) (*PollSIO2Response, error) {
 	response := &PollSIO2Response{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// ParseGetYskCardResponse parses an HTTP response from a GetYskCardWithResponse call
+func ParseGetYskCardResponse(rsp *http.Response) (*GetYskCardResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetYskCardResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Data *YSKCardList `json:"data,omitempty"`
+
+			// Message message returned by server side if there is any
+			Message *string `json:"message,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest BaseResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteYskCardResponse parses an HTTP response from a DeleteYskCardWithResponse call
+func ParseDeleteYskCardResponse(rsp *http.Response) (*DeleteYskCardResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteYskCardResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest BaseResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest BaseResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
 	}
 
 	return response, nil
