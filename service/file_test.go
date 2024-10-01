@@ -21,14 +21,14 @@ func TestNewInteruptReader(t *testing.T) {
 	ctx, cancel = context.WithCancel(context.Background())
 
 	go func() {
-		// 在初始上下文的基础上创建一个有取消功能的上下文
+		// Create a context with cancellation function on the basis of initial context
 		//	ctx, cancel := context.WithCancel(ctx)
 		fmt.Println("开始")
 		fIn, err := os.Open("/Users/liangjianli/Downloads/demo_data.tar.gz")
 		if err != nil {
 		}
 		defer fIn.Close()
-		fmt.Println("创建新文件")
+		fmt.Println("Create a new file")
 		fOut, err := os.Create("/Users/liangjianli/Downloads/demo_data1.tar.gz")
 		if err != nil {
 			fmt.Println(err)
@@ -36,7 +36,7 @@ func TestNewInteruptReader(t *testing.T) {
 
 		defer fOut.Close()
 
-		fmt.Println("准备复制")
+		fmt.Println("Prepare to copy")
 		//	_, err = io.Copy(out, NewReader(ctx, f))
 		//	time.Sleep(time.Second * 2)
 		// ctx.Done()
