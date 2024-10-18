@@ -1,1 +1,1 @@
-{"project_name":"casaos","tag":"v0.4.8","previous_tag":"v0.4.7","version":"0.4.9","commit":"b335b7b5a001d977bf37be065a9947c39e86a7ac","date":"2024-10-01T16:15:42.579820435+07:00","runtime":{"goos":"linux","goarch":"amd64"}}
+{"project_name":"casaos","tag":"v1.4.0-beta2","previous_tag":"v0.4.8","version":"1.4.0-beta2","commit":"c57597ef9726b75f1ec91e15043d4edc780f255b","date":"2024-10-03T21:32:57.852459278+07:00","runtime":{"goos":"linux","goarch":"amd64"}}
