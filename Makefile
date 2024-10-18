@@ -12,7 +12,7 @@ CUR_DIR=$(PWD)
 CUR_TAG ?= $(shell git describe --tags --match '*.*.*' | sort -V | tail -n1 | sed 's/-[0-9]*-g[0-9a-f]*//')
 PREV_TAG ?= $(shell git describe --tags --match '*.*.*' | sort -V | head -n2 | tail -n1 | sed 's/-[0-9]*-g[0-9a-f]*//')
 ARCHIVE_PATH=buildzip
-PACKAGE_NAME=$(OS)-$(ARCHITECHTURE)-nextzenos-user-service-$(TAG)
+PACKAGE_NAME=$(OS)-$(ARCHITECHTURE)-nextzenos-$(TAG)
 COMMIT_MESSAGE ?="update: makefile"
 build_service:
 	$(GORELEASERBUILD) --clean --snapshot -f .goreleaser.debug.yaml --id $(SERVICE)-$(ARCHITECHTURE)
@@ -44,7 +44,5 @@ push_release_all:
 push_release:
 	${GORELEASER} release --single-target
 push_git:
-	${GIT} pull ${GIT_REMOTE} &&\
-	${GIT} add .	&&\
 	${GIT} commit -m "${COMMIT_MESSAGE}" &&\
 	${GIT} push ${GIT_REMOTE}	
