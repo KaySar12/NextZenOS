@@ -41,3 +41,6 @@ CasaOS
 /buildzip
 # System Files
 .DS_Store
+linux-amd64-nextzenos-.tar.gz
+build/sysroot/usr/bin/casaos
+build/sysroot/usr/bin/casaos

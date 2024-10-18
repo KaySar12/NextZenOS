@@ -1,1 +1,1 @@
-{"project_name":"casaos","tag":"v1.4.0-beta2","previous_tag":"v0.4.8","version":"1.4.0-beta2","commit":"c57597ef9726b75f1ec91e15043d4edc780f255b","date":"2024-10-03T21:32:57.852459278+07:00","runtime":{"goos":"linux","goarch":"amd64"}}
+{"project_name":"nextzenos","tag":"v1.4.0-beta2","previous_tag":"v0.4.8","version":"1.4.0","commit":"d674401cab5df09fddb5b265af739988ee2af748","date":"2024-10-18T17:07:38.143085291+07:00","runtime":{"goos":"linux","goarch":"amd64"}}

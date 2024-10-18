@@ -2,6 +2,7 @@ GORELEASER=goreleaser
 GORELEASERBUILD=$(GORELEASER) build
 GIT=git
 GIT_REMOTE?=origin
+PROJECT = nextzenos
 SERVICE = casaos
 ARCHITECHTURE= amd64
 OS=linux
@@ -12,13 +13,13 @@ CUR_DIR=$(PWD)
 CUR_TAG ?= $(shell git describe --tags --match '*.*.*' | sort -V | tail -n1 | sed 's/-[0-9]*-g[0-9a-f]*//')
 PREV_TAG ?= $(shell git describe --tags --match '*.*.*' | sort -V | head -n2 | tail -n1 | sed 's/-[0-9]*-g[0-9a-f]*//')
 ARCHIVE_PATH=buildzip
-PACKAGE_NAME=$(OS)-$(ARCHITECHTURE)-nextzenos-$(TAG)
+PACKAGE_NAME=$(OS)-$(ARCHITECHTURE)-$(PROJECT)-$(TAG)
 COMMIT_MESSAGE ?="update: makefile"
 build_service:
-	$(GORELEASERBUILD) --clean --snapshot -f .goreleaser.debug.yaml --id $(SERVICE)-$(ARCHITECHTURE)
+	$(GORELEASERBUILD) --clean --snapshot -f .goreleaser.debug.yaml --id $(PROJECT)-$(ARCHITECHTURE)
 
 package:
-	 cp -f $(CUR_DIR)/dist/$(SERVICE)-$(ARCHITECHTURE)_$(OS)_$(ARCHITECHTURE)_$(VERSION)/$(BIN_PATH)/$(SERVICE) $(CUR_DIR)/$(BIN_PATH) \
+	 cp -f $(CUR_DIR)/dist/$(PROJECT)-$(ARCHITECHTURE)_$(OS)_$(ARCHITECHTURE)_$(VERSION)/$(BIN_PATH)/$(SERVICE) $(CUR_DIR)/$(BIN_PATH) \
 	 && tar -czvf $(PACKAGE_NAME).tar.gz $(CUR_DIR)/$(BUILD_PATH)
 
 archive_package:
