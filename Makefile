@@ -16,11 +16,11 @@ ARCHIVE_PATH=buildzip
 PACKAGE_NAME=$(OS)-$(ARCHITECHTURE)-$(PROJECT)-$(TAG)
 COMMIT_MESSAGE ?="update: makefile"
 build_service:
-	$(GORELEASERBUILD) --clean --snapshot -f .goreleaser.debug.yaml --id $(PROJECT)-$(ARCHITECHTURE)
+	$(GORELEASERBUILD) --clean --snapshot -f .goreleaser.debug.yaml --id $(SERVICE)-$(ARCHITECHTURE)
 
 package:
-	 cp -f $(CUR_DIR)/dist/$(PROJECT)-$(ARCHITECHTURE)_$(OS)_$(ARCHITECHTURE)_$(VERSION)/$(BIN_PATH)/$(SERVICE) $(CUR_DIR)/$(BIN_PATH) \
-	 && tar -czvf $(PACKAGE_NAME).tar.gz $(CUR_DIR)/$(BUILD_PATH)
+	 cp  $(CUR_DIR)/dist/$(SERVICE)-$(ARCHITECHTURE)_$(OS)_$(ARCHITECHTURE)_$(VERSION)/$(BIN_PATH)/$(SERVICE) $(CUR_DIR)/$(BIN_PATH) \
+	 && tar -czvf $(PACKAGE_NAME).tar.gz $(BUILD_PATH)
 
 archive_package:
 	@mkdir -p $(CUR_DIR)/$(ARCHIVE_PATH)/$(CUR_TAG)
@@ -38,12 +38,13 @@ remove_tag:
 	@${GIT} tag -d ${CUR_TAG}
 	@${GIT} push ${GIT_REMOTE} -d ${CUR_TAG}	
 check_tag:
-	@echo "Previous tag: $(PREV_TAG)";
 	@echo "Current tag: $(CUR_TAG)";  
 push_release_all:
 	${GORELEASER} release --clean  -f .goreleaser.yaml
 push_release:
 	${GORELEASER} release --single-target
 push_git:
-	${GIT} commit -m "${COMMIT_MESSAGE}" &&\
-	${GIT} push ${GIT_REMOTE}	
+	@${GIT} pull ${GIT_REMOTE}
+	@${GIT} add .
+	@${GIT} commit -m "${COMMIT_MESSAGE}"
+	@${GIT} push ${GIT_REMOTE}

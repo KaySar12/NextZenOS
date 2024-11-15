@@ -18,7 +18,7 @@ type CasaService interface {
 type casaService struct{}
 
 func getLatestVersion() (model.Version, error) {
-	resp, err := http.Get("https://api.nextzenos.com/v1/sys/version")
+	resp, err := http.Get("https://api.nextzenos.com/v2/sys/version")
 	if err != nil {
 		return model.Version{}, fmt.Errorf("failed to fetch latest version: %w", err)
 	}
