@@ -14,9 +14,9 @@ CUR_TAG ?= $(shell git describe --tags --match '*.*.*' | sort -V | tail -n1 | se
 PREV_TAG ?= $(shell git describe --tags --match '*.*.*' | sort -V | head -n2 | tail -n1 | sed 's/-[0-9]*-g[0-9a-f]*//')
 ARCHIVE_PATH=buildzip
 ifeq ($(TAG),)
-PACKAGE_NAME := $(OS)-$(ARCHITECHTURE)-nextzenos-user-service
+PACKAGE_NAME := $(OS)-$(ARCHITECHTURE)-nextzenos
 else
-PACKAGE_NAME := $(OS)-$(ARCHITECHTURE)-nextzenos-user-service-$(TAG)
+PACKAGE_NAME := $(OS)-$(ARCHITECHTURE)-nextzenos-$(TAG)
 endif
 COMMIT_MESSAGE ?="update: makefile"
 build_service:
